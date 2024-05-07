@@ -1,14 +1,17 @@
 import { useFrame, useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
-import { useContext, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Billboard, Text } from "@react-three/drei";
-import { ShipContext } from "./Experience";
 
-export const Ship = ({ position, name }) => {
-  const [ships, addShip] = useContext(ShipContext);
+export const Ship = ({ position, name, addShip }) => {
   const [showText, setShowText] = useState(false);
   const texture = useLoader(TextureLoader, "rocket.png");
   const ship = useRef();
+
+  useEffect(() => {
+    if (ship.current) addShip(ship.current);
+  }, [ship.current])
+
   useFrame((state, delta) => {
     // ship.current.translateY(delta / 5);
     ship.current.lookAt(state.camera.position);
@@ -34,6 +37,8 @@ export const Ship = ({ position, name }) => {
         position={position}
         scale={0.2}
         ref={ship}
+        name={name}
+        userData={{ health: 100}}
       >
         <planeGeometry />
         <meshBasicMaterial attach='material' map={texture} transparent />

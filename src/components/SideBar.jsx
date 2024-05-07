@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Vector3 } from "three";
 
 const SideBar = ({ setLine }) => {
   const [xi, setXi] = useState(null);
@@ -36,8 +37,8 @@ const SideBar = ({ setLine }) => {
   const fireHandler = () => {
     if (!(xi && yi && zi && a && b && c)) return;
     setLine([
-      { x: parseInt(xi), y: parseInt(yi), z: parseInt(zi) },
-      { x: parseInt(a), y: parseInt(b), z: parseInt(c) },
+      new Vector3(parseInt(xi), parseInt(yi), parseInt(zi)),
+      new Vector3(parseInt(a), parseInt(b), parseInt(c))
     ]);
   };
 
