@@ -36,8 +36,8 @@ const SideBar = ({ setLine }) => {
   const fireHandler = () => {
     if (!(xi && yi && zi && a && b && c)) return;
     setLine([
-      { x: xi, y: yi, z: zi },
-      { x: a, y: b, z: c },
+      { x: parseInt(xi), y: parseInt(yi), z: parseInt(zi) },
+      { x: parseInt(a), y: parseInt(b), z: parseInt(c) },
     ]);
   };
 

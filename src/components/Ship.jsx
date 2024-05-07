@@ -1,9 +1,11 @@
 import { useFrame, useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { Billboard, Text } from "@react-three/drei";
+import { ShipContext } from "./Experience";
 
 export const Ship = ({ position, name }) => {
+  const [ships, addShip] = useContext(ShipContext);
   const [showText, setShowText] = useState(false);
   const texture = useLoader(TextureLoader, "rocket.png");
   const ship = useRef();
@@ -26,6 +28,7 @@ export const Ship = ({ position, name }) => {
         visible={false}
       >
         <sphereGeometry />
+        
       </mesh>
       <mesh
         position={position}
