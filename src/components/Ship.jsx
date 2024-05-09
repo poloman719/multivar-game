@@ -7,6 +7,7 @@ export const Ship = ({ position, name, addShip }) => {
   const [showText, setShowText] = useState(false);
   const texture = useLoader(TextureLoader, "rocket.png");
   const ship = useRef();
+  const hitBox = useRef();
 
   useEffect(() => {
     if (ship.current) addShip(ship.current);
@@ -29,9 +30,11 @@ export const Ship = ({ position, name, addShip }) => {
         onPointerEnter={() => setShowText(true)}
         onPointerLeave={() => setShowText(false)}
         visible={false}
+        ref={hitBox}
+        name={name}
       >
         <sphereGeometry />
-        
+        <meshBasicMaterial transparent />
       </mesh>
       <mesh
         position={position}
