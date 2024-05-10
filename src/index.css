@@ -24,8 +24,8 @@ body {
 
 input {
   width: 2rem;
-  border: none;
-  border-bottom: 1px solid black;
+  border: 1px solid black;
+  
 }
 
 .app {
@@ -46,4 +46,25 @@ button {
 button:hover {
   background-color: red;
   cursor: pointer;
+}
+
+.frac-top {
+  padding-bottom: 5px;
+  width: 100%;
+  border-bottom: 1px solid black;
+  display: flex;
+  justify-content: center;
+}
+
+.frac {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.frac-bot {
+  border-top: 1px solid black;
+  margin-top: 5px;
+  margin-bottom: 25px;
 }
