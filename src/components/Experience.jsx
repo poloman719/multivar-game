@@ -3,16 +3,23 @@ import { Ship } from "./Ship";
 import { useContext, useRef } from "react";
 import { LineContext, ShipContext } from "../App";
 
+const dummyTeams = ["Joe", "Dale", "Jojo", "15", "Brandon", "Integral Test"]
+
 export const Experience = () => {
   const line = useContext(LineContext);
   const addShip = useContext(ShipContext);
 
-  const positions = useRef(new Array(7).fill(0).map(() => {
-    const x = Math.floor(Math.random() * 11) - 5;
-    const y = Math.floor(Math.random() * 11) - 5;
-    const z = Math.floor(Math.random() * 11) - 5;
-    return [x, y, z]
-  }));
+  // const positions = useRef(new Array(7).fill(0).map(() => {
+  //   const x = Math.floor(Math.random() * 11) - 5;
+  //   const y = Math.floor(Math.random() * 11) - 5;
+  //   const z = Math.floor(Math.random() * 11) - 5;
+  //   return [x, y, z]
+  // }));
+
+  const teams = useRef(dummyTeams.map((team) => ({
+    name: team,
+    position: [Math.floor(Math.random() * 11) - 5, Math.floor(Math.random() * 11) - 5, Math.floor(Math.random() * 11) - 5],
+  })));
 
   return (
     <>
@@ -22,7 +29,7 @@ export const Experience = () => {
         segments
         color="red"
       />}
-      {positions.current.map(position => <Ship position={position} name={"Joe"} addShip={addShip}/>)}
+      {teams.current.map(position => <Ship position={position.position} name={"Joe"} addShip={addShip}/>)}
     </>
   );
 };
