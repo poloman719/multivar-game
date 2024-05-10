@@ -1,17 +1,13 @@
 import { OrbitControls, Line } from "@react-three/drei";
 import { Ship } from "./Ship";
-import { useContext, useState } from "react";
-import { TextureLoader } from "three";
+import { useContext, useRef } from "react";
 import { LineContext, ShipContext } from "../App";
-import { useLoader } from "@react-three/fiber";
-
-
 
 export const Experience = () => {
   const line = useContext(LineContext);
   const addShip = useContext(ShipContext);
 
-  const [positions, setPositions] = useState(new Array(7).fill(0).map(() => {
+  const positions = useRef(new Array(7).fill(0).map(() => {
     const x = Math.floor(Math.random() * 11) - 5;
     const y = Math.floor(Math.random() * 11) - 5;
     const z = Math.floor(Math.random() * 11) - 5;
@@ -26,7 +22,7 @@ export const Experience = () => {
         segments
         color="red"
       />}
-      {positions.map(position => <Ship position={position} name={"Joe"} addShip={addShip}/>)}
+      {positions.current.map(position => <Ship position={position} name={"Joe"} addShip={addShip}/>)}
     </>
   );
 };
