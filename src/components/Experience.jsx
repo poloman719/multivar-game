@@ -29,7 +29,7 @@ export const Experience = () => {
         segments
         color="red"
       />}
-      {teams.current.map(position => <Ship position={position.position} name={"Joe"} addShip={addShip}/>)}
+      {teams.current.map(team => <Ship key={team.name} position={team.position} name={team.name} addShip={addShip}/>)}
     </>
   );
 };

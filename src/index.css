@@ -68,3 +68,13 @@ button:hover {
   margin-top: 5px;
   margin-bottom: 25px;
 }
+
+.userinput {
+  width: 75%;
+  display: flex;
+  gap: 1rem;
+}
+
+.userinput input {
+  flex-grow: 1;
+}

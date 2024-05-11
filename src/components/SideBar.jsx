@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { Vector3 } from "three";
 
-const SideBar = ({ fire }) => {
-  const [xi, setXi] = useState(null);
-  const [yi, setYi] = useState(null);
-  const [zi, setZi] = useState(null);
-  const [a, setA] = useState(null);
-  const [b, setB] = useState(null);
-  const [c, setC] = useState(null);
+const SideBar = ({ fire, move, setUser }) => {
+  const [xi, setXi] = useState("");
+  const [yi, setYi] = useState("");
+  const [zi, setZi] = useState("");
+  const [a, setA] = useState("");
+  const [b, setB] = useState("");
+  const [c, setC] = useState("");
   const [para, setPara] = useState(true);
 
   const onXi = (e) => {
@@ -34,39 +34,88 @@ const SideBar = ({ fire }) => {
     // e.target.value = Math.round(e.target.value);
     setC(e.target.value);
   };
+  const onUserInput = (e) => setUser(e.target.value);
 
   const fireHandler = () => {
     if (!(xi && yi && zi && a && b && c)) return;
     fire([
       new Vector3(parseInt(xi), parseInt(zi), parseInt(yi)),
-      new Vector3(parseInt(a), parseInt(c), parseInt(b))
+      new Vector3(parseInt(a), parseInt(c), parseInt(b)),
     ]);
-    setPara(Math.random() > .5);
+    setPara((para) => (Math.random() < 0.75 ? !para : para));
+    setXi("");
+    setYi("");
+    setZi("");
+    setA("");
+    setB("");
+    setC("");
   };
 
   const moveHandler = () => {
-    alert("waaaa")
-  }
+    if (!(xi && yi && zi && a && b && c)) return;
+    move([
+      new Vector3(parseInt(xi), parseInt(zi), parseInt(yi)),
+      new Vector3(parseInt(a), parseInt(c), parseInt(b)),
+    ]);
+    setPara((para) => (Math.random() < 0.75 ? !para : para));
+    setXi("");
+    setYi("");
+    setZi("");
+    setA("");
+    setB("");
+    setC("");
+  };
 
   return (
     <div className='sidebar'>
-      {para ? <div>
-        x = <input type='number' step='1' onChange={onXi} /> +{" "}
-        <input type='number' step='1' onChange={onA} />t
-      </div> : <div className="frac"><div className="frac-top">x -{" "}<input type='number' step='1' onChange={onXi} /></div><input className="frac-bot" type='number' step='1' onChange={onA} />=</div>}
-      {para ? <div>
-        y = <input type='number' step='1' onChange={onYi} /> +{" "}
-        <input type='number' step='1' onChange={onB} />t
-      </div> : <div className="frac"><div className="frac-top">y -{" "}<input type='number' step='1' onChange={onYi} /></div><input className="frac-bot" type='number' step='1' onChange={onB} />=</div>}
-      {para ? <div>
-        z = <input type='number' step='1' onChange={onZi} /> +{" "}
-        <input type='number' step='1' onChange={onC} />t
-      </div> : <div className="frac"><div className="frac-top">z -{" "}<input type='number' step='1' onChange={onZi} /></div><input className="frac-bot" type='number' step='1' onChange={onC} /></div>}
+      <div className='userinput'>
+        <span>User: </span>
+        <input onChange={onUserInput}></input>
+      </div>
+      {para ? (
+        <div>
+          x = <input type='number' onChange={onXi} value={xi} /> +{" "}
+          <input type='number' onChange={onA} value={a} />t
+        </div>
+      ) : (
+        <div className='frac'>
+          <div className='frac-top'>
+            x -{" "}
+            <input type='number' onChange={onXi} value={xi} />
+          </div>
+          <input className='frac-bot' type='number' onChange={onA} value={a} />=
+        </div>
+      )}
+      {para ? (
+        <div>
+          y = <input type='number' onChange={onYi} value={yi} /> +{" "}
+          <input type='number' onChange={onB} value={b} />t
+        </div>
+      ) : (
+        <div className='frac'>
+          <div className='frac-top'>
+            y -{" "}
+            <input type='number' onChange={onYi} value={yi} />
+          </div>
+          <input className='frac-bot' type='number' onChange={onB} value={b} />=
+        </div>
+      )}
+      {para ? (
+        <div>
+          z = <input type='number' onChange={onZi} value={zi} /> +{" "}
+          <input type='number' onChange={onC} value={c} />t
+        </div>
+      ) : (
+        <div className='frac'>
+          <div className='frac-top'>
+            z -{" "}
+            <input type='number' onChange={onZi} value={zi} />
+          </div>
+          <input className='frac-bot' type='number' onChange={onC} value={c} />
+        </div>
+      )}
       <button onClick={fireHandler}>Fire!</button>
-      <input type='number' step='1' />
-      <input type='number' step='1' />
-      <input type='number' step='1' />
-      <button onClick={moveHandler}>Move</button>
+      <button onClick={moveHandler}>Move!</button>
     </div>
   );
 };

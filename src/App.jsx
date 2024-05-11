@@ -8,24 +8,27 @@ import { useLoader } from "@react-three/fiber";
 
 export const LineContext = createContext(null);
 export const ShipContext = createContext(null);
+export const UserContext = createContext(null);
 
 function App() {
   const [line, setLine] = useState(null);
   const [ships, setShips] = useState([]);
+  const [user, setUser] = useState("");
   const texture = useLoader(TextureLoader, "explosion.png");
 
   const LineCheck = (origin, direction, ships) => {
     const raycaster = new Raycaster(origin, direction.normalize(), 1);
     const intersections = raycaster.intersectObjects(ships, false);
-    intersections.forEach((intersection) => {
-      const obj = intersection.object;
-      obj.material.map = texture;
-      obj.scale.set(1, 1, 1);
-      setTimeout(() => {
-        removeObject3D(obj);
-        setLine(null);
-      }, 500);
-    });
+    if (intersections.length == 0) return null;
+    const obj = intersections[0].object;
+    obj.material.map = texture;
+    obj.scale.set(1, 1, 1);
+    setTimeout(() => {
+      obj.userData.health -= 10;
+      console.log(obj.userData.health);
+      setLine(null);
+    }, 500);
+    return intersections[0].point;
   };
 
   const addShip = (ship) => {
@@ -40,18 +43,24 @@ function App() {
     LineCheck(val[0], val[1], ships);
   };
 
+  const move = (val) => {
+    console.log(val);
+  };
+
   return (
     <>
       <div className='app'>
-        <LineContext.Provider value={line}>
-          <SideBar fire={fire} />
-          <ShipContext.Provider value={addShip}>
-            <Canvas shadows camera={{ position: [0, 0, 20], fov: 30 }}>
-              <color attach='background' args={["#000000"]} />
-              <Experience />
-            </Canvas>
-          </ShipContext.Provider>
-        </LineContext.Provider>
+        <UserContext.Provider value={user}>
+          <LineContext.Provider value={line}>
+            <ShipContext.Provider value={addShip}>
+              <SideBar fire={fire} move={move} setUser={setUser} />
+              <Canvas shadows camera={{ position: [0, 0, 20], fov: 30 }}>
+                <color attach='background' args={["#000000"]} />
+                <Experience />
+              </Canvas>
+            </ShipContext.Provider>
+          </LineContext.Provider>
+        </UserContext.Provider>
       </div>
     </>
   );
