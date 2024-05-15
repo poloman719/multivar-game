@@ -38,6 +38,7 @@ const SideBar = ({ fire, move, setUser }) => {
   const onUserInput = (e) => setUser(e.target.value);
 
   const fireHandler = () => {
+    socket.emit('fire', 'fire shot')
     if (!(xi && yi && zi && a && b && c)) return;
     fire([
       new Vector3(parseInt(xi), parseInt(zi), parseInt(yi)),
