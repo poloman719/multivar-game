@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Vector3 } from "three";
+import { socket } from "../socket";
 
 const SideBar = ({ fire, move, setUser }) => {
   const [xi, setXi] = useState("");

@@ -1,20 +1,40 @@
 import { Canvas } from "@react-three/fiber";
 import { Experience } from "./components/Experience";
-import { useState, createContext } from "react";
+import { useState, createContext, useEffect } from "react";
 import SideBar from "./components/SideBar";
 import { Raycaster, TextureLoader } from "three";
 import removeObject3D from "./components/remove";
 import { useLoader } from "@react-three/fiber";
+import { socket } from "./socket";
 
 export const LineContext = createContext(null);
 export const ShipContext = createContext(null);
 export const UserContext = createContext(null);
 
 function App() {
+  const [isConnected, setIsConnected] = useState(socket.connected);
   const [line, setLine] = useState(null);
   const [ships, setShips] = useState([]);
   const [user, setUser] = useState("");
   const texture = useLoader(TextureLoader, "explosion.png");
+
+  useEffect(() => {
+    function onConnect() {
+      setIsConnected(true);
+    }
+
+    function onDisconnect() {
+      setIsConnected(false);
+    }
+
+    socket.on('connect', onConnect);
+    socket.on('disconnect', onDisconnect);
+
+    return () => {
+      socket.off('connect', onConnect);
+      socket.off('disconnect', onDisconnect);
+    };
+  }, []);
 
   const LineCheck = (origin, direction, ships) => {
     const raycaster = new Raycaster(origin, direction.normalize(), 1);
