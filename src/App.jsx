@@ -16,6 +16,8 @@ function App() {
   const [line, setLine] = useState(null);
   const [ships, setShips] = useState([]);
   const [user, setUser] = useState("");
+  const [users, setUsers] = useState([]);
+  const [gameState, setGameState] = useState(false);
   const texture = useLoader(TextureLoader, "explosion.png");
 
   useEffect(() => {
@@ -26,9 +28,34 @@ function App() {
     function onDisconnect() {
       setIsConnected(false);
     }
-
+    
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
+    socket.on('users', (value) => setUsers(value));
+    socket.on('new_user', (value) => setUsers(state => [...state, value]));
+    socket.on('start_game', () => {
+      setGameState(true)
+    });
+    socket.on('kill', (value) => {
+      // change texture of killed to explosion and set timeout to delete explosion
+    })
+    socket.on('end_game', () => {
+      setUsers([]);
+      setGameState(false);
+    })
+    socket.on('move', (id, vel) => {
+      const moved = users.find((user) => user.id == id);
+      moved.velocity = vel;
+    })
+    socket.on('stop', (id, position) => {
+      const stopped = users.find((user) => user.id == id);
+      stopped.velocity = null;
+      stopped.position = position;
+    })
+    socket.on('damage', (id) => {
+      const damaged = users.find((user) => user.id == id);
+      damaged.health -= 10;
+    })
 
     return () => {
       socket.off('connect', onConnect);
@@ -43,11 +70,8 @@ function App() {
     const obj = intersections[0].object;
     obj.material.map = texture;
     obj.scale.set(1, 1, 1);
-    setTimeout(() => {
-      obj.userData.health -= 10;
-      console.log(obj.userData.health);
-      setLine(null);
-    }, 500);
+    const id = object.userData.id;
+    socket.emit("damage", id);
     return intersections[0].point;
   };
 
@@ -76,7 +100,7 @@ function App() {
               <SideBar fire={fire} move={move} setUser={setUser} />
               <Canvas shadows camera={{ position: [0, 0, 20], fov: 30 }}>
                 <color attach='background' args={["#000000"]} />
-                <Experience />
+                <Experience users={users} />
               </Canvas>
             </ShipContext.Provider>
           </LineContext.Provider>
