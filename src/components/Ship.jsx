@@ -1,26 +1,21 @@
 import { useFrame, useLoader } from "@react-three/fiber";
-import { TextureLoader } from "three";
+import { TextureLoader, Vector3 } from "three";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Billboard, Text } from "@react-three/drei";
-import { UserContext } from "../App";
 
 export const Ship = ({ data, addShip }) => {
-  const user = useContext(UserContext);
   const [showText, setShowText] = useState(false);
   const texture = useLoader(TextureLoader, "rocket.png");
   const ship = useRef();
   const hitBox = useRef();
 
-  const position = data.position;
+  const position = new Vector3(data.position[0], data.position[1], data.position[2]);
 
   useEffect(() => {
     if (hitBox.current) addShip(hitBox.current);
   }, [hitBox.current]);
 
   useFrame((state, delta) => {
-    if (user == data.name) {
-      ship.current.translateY(delta / 5);
-    }
     ship.current.lookAt(state.camera.position);
     ship.current.rotateZ(-Math.PI / 2);
   });
@@ -29,12 +24,12 @@ export const Ship = ({ data, addShip }) => {
     <group>
       <Billboard
         visible={showText}
-        position={position.map((n, i) => (i == 1 ? n + 0.5 : n))}
+        position={position.add(new Vector3(0, 0.5, 0))}
         scale={0.2}
       >
         <Text>
           {data.name} {"("}
-          {position[0]}, {position[2]}, {position[1]}
+          {position.x}, {position.z}, {position.y}
           {")"}
         </Text>
       </Billboard>
@@ -45,16 +40,12 @@ export const Ship = ({ data, addShip }) => {
         onPointerLeave={() => setShowText(false)}
         visible={false}
         ref={hitBox}
-        userData={{ id: data.id}}
+        userData={{ id: data.id }}
       >
         <sphereGeometry />
         <meshBasicMaterial transparent />
       </mesh>
-      <mesh
-        position={position}
-        scale={0.2}
-        ref={ship}
-      >
+      <mesh position={position} scale={0.2} ref={ship}>
         <planeGeometry />
         <meshBasicMaterial attach='material' map={texture} transparent />
       </mesh>

@@ -1,11 +1,7 @@
 import { OrbitControls, Line } from "@react-three/drei";
 import { Ship } from "./Ship";
-import { useContext } from "react";
-import { LineContext, ShipContext } from "../App";
 
-export const Experience = ({ ships }) => {
-  const line = useContext(LineContext);
-  const addShip = useContext(ShipContext);
+export const Experience = ({ line, ships, addShip }) => {
 
   // const positions = useRef(new Array(7).fill(0).map(() => {
   //   const x = Math.floor(Math.random() * 11) - 5;
@@ -22,7 +18,7 @@ export const Experience = ({ ships }) => {
         segments
         color="red"
       />}
-      {ships.current.filter(ship => ship.health > 0).map(ship => <Ship key={ship.id} data={ship} addShip={addShip}/>)}
+      {ships?.filter(ship => ship.health > 0).map(ship => <Ship key={ship.id} data={ship} addShip={addShip}/>)}
     </>
   );
 };

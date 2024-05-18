@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Vector3 } from "three";
 import { socket } from "../socket";
 
-const SideBar = ({ fire, move, setUser }) => {
+const SideBar = ({ fire, move, TEMPORARY, loggedIn, isHost }) => {
   const [xi, setXi] = useState("");
   const [yi, setYi] = useState("");
   const [zi, setZi] = useState("");
@@ -10,6 +10,7 @@ const SideBar = ({ fire, move, setUser }) => {
   const [b, setB] = useState("");
   const [c, setC] = useState("");
   const [para, setPara] = useState(true);
+  const userInput = useRef();
 
   const onXi = (e) => {
     // e.target.value = Math.round(e.target.value);
@@ -35,12 +36,17 @@ const SideBar = ({ fire, move, setUser }) => {
     // e.target.value = Math.round(e.target.value);
     setC(e.target.value);
   };
-  const onUserInput = (e) => setUser(e.target.value);
+
+  const addUser = () => {
+    socket.emit("add_user", userInput.current.value);
+  };
+
+  const startGame = () => {
+    if (!isHost) return;
+    socket.emit('start_game')
+  }
 
   const fireHandler = () => {
-    try {
-      socket.emit('fire', 'fire shot')
-    } catch (err) { alert(err)}
     if (!(xi && yi && zi && a && b && c)) return;
     fire([
       new Vector3(parseInt(xi), parseInt(zi), parseInt(yi)),
@@ -72,10 +78,17 @@ const SideBar = ({ fire, move, setUser }) => {
 
   return (
     <div className='sidebar'>
+      <ul>
+        {TEMPORARY?.map((user) => (
+          <li key={user.id}>{user.name}</li>
+        ))}
+      </ul>
       <div className='userinput'>
         <span>User: </span>
-        <input onChange={onUserInput}></input>
+        <input ref={userInput}></input>
       </div>
+      {!loggedIn && <button onClick={addUser}>Add User</button>}
+      {isHost && <button onClick={startGame}>Start Game</button>}
       {para ? (
         <div>
           x = <input type='number' onChange={onXi} value={xi} /> +{" "}
