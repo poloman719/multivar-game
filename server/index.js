@@ -2,13 +2,20 @@ import express from "express";
 import { createServer } from "node:http";
 import { Server } from "socket.io";
 import { Vector3 } from "three";
+import crypto from "crypto";
+import InMemorySessionStore from "./SessionStore.js";
 
 const app = express();
 const server = createServer(app);
+const sessionStore = new InMemorySessionStore();
+const randomId = () => crypto.randomBytes(8).toString("hex");
 const io = new Server(server, {
   cors: {
-    origin: "http://10.0.0.54:5173",
+    origin: "*",
   },
+  connectionStateRecovery:{
+    maxDisconnectionDuration:2*60*1000,
+  }
 });
 
 class User {
@@ -52,20 +59,57 @@ const users = [];
 // structure: { name, id, health, position, velocity (not time, that is handled on server) }
 let gameState = false;
 
+
 server.listen(3000, () => {
   console.log("server running at http://10.0.0.54:3000");
 });
 
+io.use((socket, next) => {
+  const sessionID = socket.handshake.auth.sessionID;
+  console.log("sessionID: "+sessionID);
+    // find existing session
+    const session = sessionStore.findSession(sessionID);
+    console.log(sessionStore);
+    console.log("session: "+session);
+    if(session){
+    socket.sessionID = sessionID;
+    return next();
+    }
+  
+  // create new session
+  socket.sessionID = randomId();
+  sessionStore.saveSession(socket.sessionID,{
+    connected: true,
+  });
+  next();
+});
+
 io.on("connection", (socket) => {
-  console.log("someone connected");
+  console.log("someone connected with a session id of: "+socket.sessionID);
+  sessionStore.saveSession(socket.sessionID,{
+    connected: true,
+  });
+  socket.emit("session", {
+    sessionID: socket.sessionID,
+  });
   socket.on("disconnect", () => {
     console.log("disc");
+    sessionStore.saveSession(socket.sessionID,{
+      connected: false,
+    });
   });
-  if (users.length > 0) socket.emit("users", users);
+  if (users.length > 0) {
+      console.log(users[0]);
+      function sendUsers(){
+        io.timeout(1000).emit("users", users, (res) =>{if(res) sendUsers()});
+        console.log("sending...");
+      }
+      sendUsers();
+  }
   socket.on("add_user", (value) => {
-    const newUser = new User(value, socket.id, users.length == 0);
+    const newUser = new User(value, socket.sessionID, users.length == 0);
     users.push(newUser);
-    io.emit("new_user", newUser);
+    io.sockets.emit("new_user", newUser);
   });
   socket.on("start_game", () => {
     console.log("game started");

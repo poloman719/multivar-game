@@ -2,6 +2,31 @@
   width: 100vw;
   height: 100vh;
 }
+.lobby{
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width:100vw;
+  height:100vh;
+  font-size:2rem;
+}
+
+form{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height:8vh;
+}
+
+.lobby input{
+  width:6rem;
+  font-size: 1rem;
+}
+
+.lobbyButton{
+  padding:0.5rem;
+}
 
 body {
   margin: 0;

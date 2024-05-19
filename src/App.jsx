@@ -2,6 +2,7 @@ import { Canvas } from "@react-three/fiber";
 import { Experience } from "./components/Experience";
 import { useState, createContext, useEffect } from "react";
 import SideBar from "./components/SideBar";
+import Lobby from "./components/Lobby";
 import { Raycaster, TextureLoader } from "three";
 import { useLoader } from "@react-three/fiber";
 import { socket } from "./socket";
@@ -16,7 +17,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [gameState, setGameState] = useState(false);
   const texture = useLoader(TextureLoader, "explosion.png");
-
+  
   useEffect(() => {
     function onConnect() {
       setIsConnected(true);
@@ -28,12 +29,20 @@ function App() {
 
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
+    
+    socket.on("session", ({ sessionID }) => {
+      // attach the session ID to the next reconnection attempts
+      socket.auth = { sessionID };
+      // store it in the localStorage
+      localStorage.setItem("sessionID", sessionID);
+    });
+
     socket.on("users", (value) => {
-      setUsers(value);
+      setUsers(value);  
     });
     socket.on("new_user", (value) => {
       setUsers((state) => [...state, value]);
-      if (value.id == socket.id) setUser(value);
+      if (value.id == localStorage.getItem("sessionID")) setUser(value);
     });
     socket.on("start_game", (positions) => {
       setUsers((users) => {
@@ -98,18 +107,25 @@ function App() {
   const move = (val) => {
     console.log(val);
   };
-
+  let isThereUser = false;
+  for(const pieceofshituser of users){
+    if(pieceofshituser.id==localStorage.getItem("sessionID"))
+      isThereUser = true;
+  }
+  console.log(user);
   return (
     <>
+      {(isConnected&&isThereUser)?
       <div className='app'>
+        
         <LineContext.Provider value={line}>
-          <SideBar
+          {users.length>0? <SideBar
             fire={fire}
             move={move}
             TEMPORARY={users}
             loggedIn={user}
             isHost={user?.host}
-          />
+          /> : <h1>Loading...</h1>}
           <Canvas shadows camera={{ position: [0, 0, 20], fov: 30 }}>
             <color attach='background' args={["#000000"]} />
             {gameState && (
@@ -118,6 +134,7 @@ function App() {
           </Canvas>
         </LineContext.Provider>
       </div>
+      : <Lobby/>}
     </>
   );
 }

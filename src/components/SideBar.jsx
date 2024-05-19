@@ -36,10 +36,10 @@ const SideBar = ({ fire, move, TEMPORARY, loggedIn, isHost }) => {
     // e.target.value = Math.round(e.target.value);
     setC(e.target.value);
   };
-
-  const addUser = () => {
-    socket.emit("add_user", userInput.current.value);
-  };
+  
+  // const addUser = () => {
+  //   socket.emit("add_user", userInput.current.value);
+  // };
 
   const startGame = () => {
     if (!isHost) return;
@@ -87,7 +87,7 @@ const SideBar = ({ fire, move, TEMPORARY, loggedIn, isHost }) => {
         <span>User: </span>
         <input ref={userInput}></input>
       </div>
-      {!loggedIn && <button onClick={addUser}>Add User</button>}
+      {/* {!loggedIn && <button onClick={addUser}>Add User</button>} */}
       {isHost && <button onClick={startGame}>Start Game</button>}
       {para ? (
         <div>
