@@ -23,12 +23,12 @@ export const Ship = ({ data, addShip, exploded }) => {
   useFrame((state, delta) => {
     // if (data.velocity) ship.current.position.add(new Vector3(data.velocity[0], data.velocity[1], data.velocity[2]) * delta / 1000)
     if (data.velocity) {
-      const localVelocity = ship.current.worldToLocal(new Vector3(data.velocity[0], data.velocity[1], data.velocity[2]));
-      console.log(localVelocity.length());
-      ship.current.translateOnAxis(localVelocity.normalize().negate(), localVelocity.length() * delta)
-      // ship.current.translateX(data.velocity[1] * delta)
-      // ship.current.translateY(data.velocity[0] * delta)
-      // ship.current.translateZ(data.velocity[2] * delta)
+      // const localVelocity = ship.current.worldToLocal(new Vector3(data.velocity[0], data.velocity[1], data.velocity[2]));
+      // console.log(localVelocity.length());
+      // ship.current.translateOnAxis(localVelocity.normalize().negate(), localVelocity.length() * delta)
+      ship.current.position.x += data.velocity[0] * delta
+      ship.current.position.y += data.velocity[1] * delta
+      ship.current.position.z += data.velocity[2] * delta
     }
     ship.current.lookAt(state.camera.position);
     ship.current.rotateZ(-Math.PI / 2);

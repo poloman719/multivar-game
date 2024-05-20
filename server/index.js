@@ -1,7 +1,6 @@
 import express from "express";
 import { createServer } from "node:http";
 import { Server } from "socket.io";
-import { Vector3 } from "three";
 import crypto from "crypto";
 import InMemorySessionStore from "./SessionStore.js";
 
