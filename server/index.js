@@ -33,12 +33,15 @@ class User {
     io.emit("damage", this.id);
     if (this.health <= 0) {
       const remaining = users.filter((user) => user.health > 0);
+      io.emit("kill", this.id);
+      users = remaining;
+      console.log(remaining);
       if (remaining.length == 1) {
-        gameState = false;
+        io.emit("end_game", remaining[0]);
+        setTimeout(()=>{
+          gameState = false;
         users = [];
-        io.emit("end_game", remaining[0].id);
-      } else {
-        io.emit("kill", this.id);
+        },5000);
       }
     }
   }
@@ -47,15 +50,17 @@ class User {
     this.velocity = vel;
     io.emit("move", this.id, vel);
     setTimeout(() => {
+      this.position = this.position.map((val, i) => val + this.velocity[i] * 5);
       this.velocity = null;
-      this.position = position.map((val, i) => val + velocity[i] * 5);
       io.emit("stop", this.id, this.position);
     }, 5000);
     // stops the movement after 5 seconds
   }
+  
 }
+  
 
-const users = [];
+var users = [];
 // structure: { name, id, health, position, velocity (not time, that is handled on server) }
 let gameState = false;
 
@@ -73,10 +78,13 @@ io.use((socket, next) => {
     console.log("session: "+session);
     if(session){
     socket.sessionID = sessionID;
+    sessionStore.saveSession(socket.sessionID,{
+      connected: true,
+    });
     return next();
     }
   
-  // create new session
+    // create new session
   socket.sessionID = randomId();
   sessionStore.saveSession(socket.sessionID,{
     connected: true,
@@ -86,9 +94,10 @@ io.use((socket, next) => {
 
 io.on("connection", (socket) => {
   console.log("someone connected with a session id of: "+socket.sessionID);
-  sessionStore.saveSession(socket.sessionID,{
-    connected: true,
-  });
+  //if game already started, blocks person from joining
+  if(gameState==true){
+    socket.emit("late",()=>{console.log(socket.id+" was late to the game rip bozo")});
+  }
   socket.emit("session", {
     sessionID: socket.sessionID,
   });
@@ -101,8 +110,13 @@ io.on("connection", (socket) => {
   if (users.length > 0) {
       console.log(users[0]);
       function sendUsers(){
-        io.timeout(1000).emit("users", users, (res) =>{if(res) sendUsers()});
-        console.log("sending...");
+        socket.emit("users", users, (res) =>{
+          if(res==null||res.status!="recieved") {
+            console.log("failed");
+            sendUsers();
+          }
+        });
+        console.log(`sending to ${socket.sessionID}...`);
       }
       sendUsers();
   }
@@ -111,7 +125,20 @@ io.on("connection", (socket) => {
     users.push(newUser);
     io.sockets.emit("new_user", newUser);
   });
-  socket.on("start_game", () => {
+  socket.on("recover_user", ()=>{
+    for(const user of users){
+      if(user.id==socket.sessionID);
+      io.sockets.emit("recieve_existing_user", user, gameState);
+    }  
+  });
+  socket.on("start_game", (callback) => {
+    if(users.length<=1){
+      console.log("not enough players");
+      callback({
+        status:"rejected"
+      });
+    }
+    else{
     console.log("game started");
     gameState = true;
     const positions = users.map(() => {
@@ -124,13 +151,26 @@ io.on("connection", (socket) => {
       user.position = positions[i];
     });
     io.emit("start_game", positions);
+    }
   });
   socket.on("damage", (id) => {
     const damaged = users.find((user) => user.id == id);
-    damaged.damage();
+    if(damaged)
+      damaged.damage();
   });
   socket.on("move", (vel) => {
-    const moved = users.find((user) => user.id == socket.id);
-    moved.move(vel);
+    const moved = users.find((user) => user.id == socket.sessionID);
+    console.log("moving: "+moved);
+    if(moved!=null)
+      moved.move(vel);
   });
+  socket.on("fire",(line)=>{
+    const userFiring = users.find((user)=>user.id==socket.sessionID);
+    if(userFiring){
+    const position = userFiring.position;
+    console.log(position[0], position[1], position[2])
+    io.emit("fire",userFiring,line);
+    }
+  }
+)
 });

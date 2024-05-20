@@ -6,16 +6,18 @@ import Lobby from "./components/Lobby";
 import { Raycaster, TextureLoader } from "three";
 import { useLoader } from "@react-three/fiber";
 import { socket } from "./socket";
+import { Vector3 } from "three";
 
 export const LineContext = createContext(null);
 
 function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
-  const [line, setLine] = useState(null);
+  const [lines, setLines] = useState([]);
   const [ships, setShips] = useState([]);
   const [users, setUsers] = useState([]);
   const [user, setUser] = useState(null);
   const [gameState, setGameState] = useState(false);
+  const [explodedShips, setExplodedShips] = useState([]);
   const texture = useLoader(TextureLoader, "explosion.png");
   
   useEffect(() => {
@@ -37,13 +39,23 @@ function App() {
       localStorage.setItem("sessionID", sessionID);
     });
 
-    socket.on("users", (value) => {
-      setUsers(value);  
+    socket.on("users", (value, callback) => {
+      setUsers(value);
+      callback({
+        status:"recieved"
+      });
+      console.log("sending callback");  
     });
     socket.on("new_user", (value) => {
+      console.log("NEW USER")
       setUsers((state) => [...state, value]);
       if (value.id == localStorage.getItem("sessionID")) setUser(value);
     });
+    socket.on("recieve_existing_user",(value, gameState)=>{
+      console.log("USER_RECONNECTED");
+      if (value.id == localStorage.getItem("sessionID")) setUser(value);
+      setGameState(gameState);
+    })
     socket.on("start_game", (positions) => {
       setUsers((users) => {
         users.forEach((user, i) => {
@@ -53,25 +65,50 @@ function App() {
         return users;
       });
     });
-    socket.on("kill", (value) => {
+    socket.on("kill", (id) => {
+      // const deadpos = user.positon;
+      console.log(id+" dieded lmao");
+      setExplodedShips(state => [...state, id]);
+      setTimeout(() => {
+        setExplodedShips(state => state.filter(ship => ship.id != id))
+        setUsers(state => state.filter(user => user.id != id))
+      }, 3000)
+      // const killedShip = ships.find((ship) => user.id == id);
+
       // change texture of killed to explosion and set timeout to delete explosion
     });
-    socket.on("end_game", () => {
-      setUsers([]);
-      setGameState(false);
+    socket.on("end_game", (winner) => {
+      console.log(winner.name+" has won!");
+      setTimeout(() => {
+        setGameState(false);
+        setUsers([]);
+        setUser(null);
+      }, 5000);
+      // setUsers([]);
     });
     socket.on("move", (id, vel) => {
-      const moved = users.find((user) => user.id == id);
-      moved.velocity = vel;
+      setUsers(state => state.map(user => user.id == id ? {...user, velocity: vel} : user))
     });
     socket.on("stop", (id, position) => {
-      const stopped = users.find((user) => user.id == id);
-      stopped.velocity = null;
-      stopped.position = position;
+      setUsers(state => state.map(user => user.id == id ? {...user, velocity: 0, position: position} : user))
     });
     socket.on("damage", (id) => {
-      const damaged = users.find((user) => user.id == id);
-      damaged.health -= 10;
+      console.log(`player with id of ${id} hit!`);
+      setUsers(state => state.map(user => user.id == id ? {...user, health: user.health - 10} : user))
+    });
+    socket.on('fire', (userFiring, line) => {
+      console.log("recieved fire!!!");
+      const newLine = [userFiring.position,line];
+      const filteredShips = ships.filter(a=> a!=userFiring);
+      console.log(filteredShips);
+      LineCheck(userFiring.position, line, filteredShips);
+      setLines((lines)=>[
+        ...lines,newLine
+      ]);
+      setTimeout(()=>{
+        setLines(lines=>lines.filter(a=> a!=newLine));
+      },4000);
+      console.log(lines);
     });
 
     return () => {
@@ -81,13 +118,15 @@ function App() {
   }, []);
 
   const LineCheck = (origin, direction, ships) => {
+    origin = new Vector3(origin[0], origin[1], origin[2]);
+    direction = new Vector3(direction[0], direction[1], direction[2]);
     const raycaster = new Raycaster(origin, direction.normalize(), 1);
     const intersections = raycaster.intersectObjects(ships, false);
     if (intersections.length == 0) return null;
     const obj = intersections[0].object;
-    obj.material.map = texture;
     obj.scale.set(1, 1, 1);
-    const id = object.userData.id;
+    const id = obj.userData.id;
+    console.log("emitting damage to id: "+id);
     socket.emit("damage", id);
     return intersections[0].point;
   };
@@ -100,36 +139,30 @@ function App() {
   };
 
   const fire = (val) => {
-    setLine(val);
     LineCheck(val[0], val[1], ships);
   };
 
   const move = (val) => {
     console.log(val);
   };
-  let isThereUser = false;
-  for(const pieceofshituser of users){
-    if(pieceofshituser.id==localStorage.getItem("sessionID"))
-      isThereUser = true;
-  }
   console.log(user);
   return (
     <>
-      {(isConnected&&isThereUser)?
+      {(isConnected&&user)?
       <div className='app'>
-        
-        <LineContext.Provider value={line}>
-          {users.length>0? <SideBar
+        <LineContext.Provider value={lines}>
+          {users!=null? <SideBar
             fire={fire}
             move={move}
             TEMPORARY={users}
             loggedIn={user}
             isHost={user?.host}
+            gameState={gameState}
           /> : <h1>Loading...</h1>}
           <Canvas shadows camera={{ position: [0, 0, 20], fov: 30 }}>
             <color attach='background' args={["#000000"]} />
             {gameState && (
-              <Experience ships={users} line={line} addShip={addShip} />
+              <Experience ships={users} lines={lines} addShip={addShip} explodedShips={explodedShips}/>
             )}
           </Canvas>
         </LineContext.Provider>

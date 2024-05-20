@@ -1,8 +1,8 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Vector3 } from "three";
 import { socket } from "../socket";
 
-const SideBar = ({ fire, move, TEMPORARY, loggedIn, isHost }) => {
+const SideBar = ({ fire, move, TEMPORARY, isHost, gameState }) => {
   const [xi, setXi] = useState("");
   const [yi, setYi] = useState("");
   const [zi, setZi] = useState("");
@@ -10,7 +10,7 @@ const SideBar = ({ fire, move, TEMPORARY, loggedIn, isHost }) => {
   const [b, setB] = useState("");
   const [c, setC] = useState("");
   const [para, setPara] = useState(true);
-  const userInput = useRef();
+  const [error, setError] = useState("");
 
   const onXi = (e) => {
     // e.target.value = Math.round(e.target.value);
@@ -43,15 +43,25 @@ const SideBar = ({ fire, move, TEMPORARY, loggedIn, isHost }) => {
 
   const startGame = () => {
     if (!isHost) return;
-    socket.emit('start_game')
+    socket.emit('start_game',(res)=>{
+      if(res=!null&&res.status=="rejected"){
+        console.log(res);
+        setError("You need at least 2 people in the lobby to start a game.");
+      }
+      else
+        setError("");
+    })
   }
 
   const fireHandler = () => {
-    if (!(xi && yi && zi && a && b && c)) return;
-    fire([
-      new Vector3(parseInt(xi), parseInt(zi), parseInt(yi)),
-      new Vector3(parseInt(a), parseInt(c), parseInt(b)),
-    ]);
+    if (!(a && b && c)) return;
+    // fire([
+    //   new Vector3(parseInt(xi), parseInt(zi), parseInt(yi)),
+    //   new Vector3(parseInt(a), parseInt(c), parseInt(b)),
+    // ]);
+    const fireData = [parseFloat(a), parseFloat(c), parseFloat(b)];
+
+    socket.emit("fire",fireData);
     setPara((para) => (Math.random() < 0.75 ? !para : para));
     setXi("");
     setYi("");
@@ -62,11 +72,8 @@ const SideBar = ({ fire, move, TEMPORARY, loggedIn, isHost }) => {
   };
 
   const moveHandler = () => {
-    if (!(xi && yi && zi && a && b && c)) return;
-    move([
-      new Vector3(parseInt(xi), parseInt(zi), parseInt(yi)),
-      new Vector3(parseInt(a), parseInt(c), parseInt(b)),
-    ]);
+    if (!(a && b && c)) return;
+    socket.emit("move", [parseFloat(a), parseFloat(c), parseFloat(b)]);
     setPara((para) => (Math.random() < 0.75 ? !para : para));
     setXi("");
     setYi("");
@@ -78,61 +85,56 @@ const SideBar = ({ fire, move, TEMPORARY, loggedIn, isHost }) => {
 
   return (
     <div className='sidebar'>
+      <h2>Players</h2>
       <ul>
         {TEMPORARY?.map((user) => (
           <li key={user.id}>{user.name}</li>
         ))}
       </ul>
-      <div className='userinput'>
-        <span>User: </span>
-        <input ref={userInput}></input>
-      </div>
       {/* {!loggedIn && <button onClick={addUser}>Add User</button>} */}
-      {isHost && <button onClick={startGame}>Start Game</button>}
+      {!gameState && isHost && <button onClick={startGame}>Start Game</button>}
       {para ? (
         <div>
-          x = <input type='number' onChange={onXi} value={xi} /> +{" "}
+          x = x<sub>0</sub> +{" "}
           <input type='number' onChange={onA} value={a} />t
         </div>
       ) : (
         <div className='frac'>
           <div className='frac-top'>
-            x -{" "}
-            <input type='number' onChange={onXi} value={xi} />
+            x - x<sub>0</sub>
           </div>
           <input className='frac-bot' type='number' onChange={onA} value={a} />=
         </div>
       )}
       {para ? (
         <div>
-          y = <input type='number' onChange={onYi} value={yi} /> +{" "}
+          y = y<sub>0</sub> +{" "}
           <input type='number' onChange={onB} value={b} />t
         </div>
       ) : (
         <div className='frac'>
           <div className='frac-top'>
-            y -{" "}
-            <input type='number' onChange={onYi} value={yi} />
+            y - y<sub>0</sub>
           </div>
           <input className='frac-bot' type='number' onChange={onB} value={b} />=
         </div>
       )}
       {para ? (
         <div>
-          z = <input type='number' onChange={onZi} value={zi} /> +{" "}
+          z = z<sub>0</sub> +{" "}
           <input type='number' onChange={onC} value={c} />t
         </div>
       ) : (
         <div className='frac'>
           <div className='frac-top'>
-            z -{" "}
-            <input type='number' onChange={onZi} value={zi} />
+            z - z<sub>0</sub>
           </div>
           <input className='frac-bot' type='number' onChange={onC} value={c} />
         </div>
       )}
       <button onClick={fireHandler}>Fire!</button>
       <button onClick={moveHandler}>Move!</button>
+      <p>{error}</p>
     </div>
   );
 };

@@ -3,9 +3,10 @@ import { TextureLoader, Vector3 } from "three";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Billboard, Text } from "@react-three/drei";
 
-export const Ship = ({ data, addShip }) => {
+export const Ship = ({ data, addShip, exploded }) => {
   const [showText, setShowText] = useState(false);
   const texture = useLoader(TextureLoader, "rocket.png");
+  const explosionTexture = useLoader(TextureLoader, "explosion.png")
   const ship = useRef();
   const hitBox = useRef();
 
@@ -15,7 +16,20 @@ export const Ship = ({ data, addShip }) => {
     if (hitBox.current) addShip(hitBox.current);
   }, [hitBox.current]);
 
+  useEffect(() => {
+    console.log(exploded)
+  }, [exploded])
+
   useFrame((state, delta) => {
+    // if (data.velocity) ship.current.position.add(new Vector3(data.velocity[0], data.velocity[1], data.velocity[2]) * delta / 1000)
+    if (data.velocity) {
+      const localVelocity = ship.current.worldToLocal(new Vector3(data.velocity[0], data.velocity[1], data.velocity[2]));
+      console.log(localVelocity.length());
+      ship.current.translateOnAxis(localVelocity.normalize().negate(), localVelocity.length() * delta)
+      // ship.current.translateX(data.velocity[1] * delta)
+      // ship.current.translateY(data.velocity[0] * delta)
+      // ship.current.translateZ(data.velocity[2] * delta)
+    }
     ship.current.lookAt(state.camera.position);
     ship.current.rotateZ(-Math.PI / 2);
   });
@@ -24,7 +38,7 @@ export const Ship = ({ data, addShip }) => {
     <group>
       <Billboard
         visible={showText}
-        position={position.add(new Vector3(0, 0.5, 0))}
+        position={data.position.map((n, i) => i == 1 ? n + .5 : n)}
         scale={0.2}
       >
         <Text>
@@ -47,7 +61,7 @@ export const Ship = ({ data, addShip }) => {
       </mesh>
       <mesh position={position} scale={0.2} ref={ship}>
         <planeGeometry />
-        <meshBasicMaterial attach='material' map={texture} transparent />
+        <meshBasicMaterial attach='material' map={exploded ? explosionTexture : texture} transparent />
       </mesh>
     </group>
   );

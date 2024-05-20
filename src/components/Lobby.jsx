@@ -4,10 +4,12 @@ import {socket} from "../socket";
 const Lobby = ()=>{
 const [username,setUsername] = useState(null);
 const sessionID = localStorage.getItem("sessionID");
+const[gameStarted, setGameStarted] = useState(false);
 console.log(sessionID);
     if (sessionID) {
         socket.auth = { sessionID };
         socket.connect();
+        socket.emit("recover_user")
     }
 const handleSubmit = (e) =>{
     e.preventDefault();
@@ -17,17 +19,19 @@ const handleSubmit = (e) =>{
     socket.emit("add_user", username);
     }
 };
-
+socket.on("late",()=>{
+    setGameStarted(true);
+});
 
 return(
     <>
-    <div className="lobby">
+    {!gameStarted? <div className="lobby">
     <h1>MULTIVAR GAME</h1>
     <form onSubmit={handleSubmit}>
     <input className="usernameInput" name="input" placeholder="Username" onChange={e=>setUsername(e.target.value)}/>
     <button className="lobbyButton">Join!</button>
     </form>
-    </div>
+    </div> : <h1 className="lobby">The game has already started.</h1>}
     </>
 );
 };
