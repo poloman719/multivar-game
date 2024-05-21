@@ -32,13 +32,7 @@ class User {
     this.health -= 10;
     io.emit("damage", this.id);
     if (this.health <= 0) {
-      const remaining = users.filter((user) => user.health > 0);
       kill(this.id);
-      users = remaining;
-      console.log(remaining);
-      if (remaining.length == 1) {
-        endGame(remaining[0]);
-      }
     }
   }
 
@@ -63,6 +57,11 @@ const endGame = remaining =>{
 }; 
 const kill = (id) => {
   io.emit("kill", id);
+  const remaining = users.filter((user) => user != id);
+  users = remaining;
+  if (remaining.length == 1) {
+    endGame(remaining[0]);
+  }
 }
 var users = [];
 // structure: { name, id, health, position, velocity (not time, that is handled on server) }

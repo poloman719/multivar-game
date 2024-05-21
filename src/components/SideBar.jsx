@@ -74,7 +74,7 @@ const SideBar = ({ fire, move, users, isHost, gameState}) => {
     setC("");
   };
 
-  const killHandler = id =>{
+  const killHandler = id => {
     socket.emit("kill",id);
   }
 
@@ -83,7 +83,7 @@ const SideBar = ({ fire, move, users, isHost, gameState}) => {
       <h2>Players</h2>
       <ul>
         {users?.map((user) => (
-          <li key={user.id}>{user.name}{isHost&&<button onClick={killHandler(user.id)}>Murder</button>}</li>
+          <li key={user.id}>{user.name}{isHost&&<button onClick={() => killHandler(user.id)}>Murder</button>}</li>
         ))}
       </ul>
       {/* {!loggedIn && <button onClick={addUser}>Add User</button>} */}
