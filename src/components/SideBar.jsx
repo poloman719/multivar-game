@@ -47,10 +47,19 @@ const SideBar = ({ fire, move, TEMPORARY, isHost, gameState }) => {
       if(res=!null&&res.status=="rejected"){
         console.log(res);
         setError("You need at least 2 people in the lobby to start a game.");
+        setTimeout(()=>{
+          setError("");
+        },5000);
       }
       else
         setError("");
     })
+  }
+
+  const endGame = () =>{
+    if(!isHost) return;
+    console.log("end the game NOW!!!!!");
+    socket.emit('end_game');
   }
 
   const fireHandler = () => {
@@ -92,7 +101,8 @@ const SideBar = ({ fire, move, TEMPORARY, isHost, gameState }) => {
         ))}
       </ul>
       {/* {!loggedIn && <button onClick={addUser}>Add User</button>} */}
-      {!gameState && isHost && <button onClick={startGame}>Start Game</button>}
+      {!gameState && isHost && <button onClick={startGame}>Start Game</button> }
+      {gameState && isHost && <button onClick={endGame}>End Game</button>}
       {para ? (
         <div>
           x = x<sub>0</sub> +{" "}

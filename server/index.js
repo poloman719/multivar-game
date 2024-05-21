@@ -37,11 +37,7 @@ class User {
       users = remaining;
       console.log(remaining);
       if (remaining.length == 1) {
-        io.emit("end_game", remaining[0]);
-        setTimeout(()=>{
-          gameState = false;
-        users = [];
-        },5000);
+        endGame(remaining[0]);
       }
     }
   }
@@ -58,7 +54,13 @@ class User {
   }
   
 }
-  
+const endGame = remaining =>{
+  io.emit("end_game", remaining);
+        setTimeout(()=>{
+          gameState = false;
+          users = [];
+        },5000);
+}; 
 
 var users = [];
 // structure: { name, id, health, position, velocity (not time, that is handled on server) }
@@ -153,6 +155,9 @@ io.on("connection", (socket) => {
     io.emit("start_game", positions);
     }
   });
+  socket.on("end_game",()=>{
+    endGame("bruh");
+  })
   socket.on("damage", (id) => {
     const damaged = users.find((user) => user.id == id);
     if(damaged)

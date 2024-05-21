@@ -78,7 +78,11 @@ function App() {
       // change texture of killed to explosion and set timeout to delete explosion
     });
     socket.on("end_game", (winner) => {
-      console.log(winner.name+" has won!");
+      if(winner=="bruh")
+        console.log("host killed the game because they stink");
+      else {
+        console.log(winner.name+" has won!");
+      }
       setTimeout(() => {
         setGameState(false);
         setUsers([]);
