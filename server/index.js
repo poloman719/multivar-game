@@ -65,7 +65,7 @@ let gameState = false;
 
 
 server.listen(3000, () => {
-  console.log("server running at http://10.0.0.54:3000");
+  console.log("server running at idk");
 });
 
 io.use((socket, next) => {
