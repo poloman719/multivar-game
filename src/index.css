@@ -113,6 +113,12 @@ button:hover {
   z-index: -1;
 }
 
+.prompt div {
+  background-color: white;
+  width: 50%;
+  height: 50%;
+}
+
 ul {
   list-style-type: none;
   display: flex;

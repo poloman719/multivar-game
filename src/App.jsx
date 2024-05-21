@@ -54,16 +54,7 @@ function App() {
       });
     });
     socket.on("kill", (id) => {
-      // const deadpos = user.positon;
-      console.log(id+" dieded lmao");
-      setExplodedShips(state => [...state, id]);
-      setTimeout(() => {
-        setExplodedShips(state => state.filter(ship => ship.id != id))
-        setUsers(state => state.filter(user => user.id != id))
-      }, 3000)
-      // const killedShip = ships.find((ship) => user.id == id);
-
-      // change texture of killed to explosion and set timeout to delete explosion
+      kill(id);
     });
     socket.on("end_game", (winner) => {
       if(winner=="bruh")
@@ -137,6 +128,21 @@ function App() {
   const move = (val) => {
     console.log(val);
   };
+
+  const kill = id=>{
+    socket.emit("kill",id);
+    // const deadpos = user.positon;
+    console.log(id+" dieded lmao");
+    setExplodedShips(state => [...state, id]);
+    setTimeout(() => {
+      setExplodedShips(state => state.filter(ship => ship.id != id))
+      setUsers(state => state.filter(user => user.id != id))
+    }, 3000)
+    // const killedShip = ships.find((ship) => user.id == id);
+
+    // change texture of killed to explosion and set timeout to delete explosion
+  };
+
   console.log(user);
   return (
     <>
@@ -150,8 +156,9 @@ function App() {
             loggedIn={user}
             isHost={user?.host}
             gameState={gameState}
+            kill={kill}
           /> : <h1>Loading...</h1>}
-          <QuestionPrompt />
+          <QuestionPrompt question={{ question: "What is 9 + 10?", answer: "21"}}/>
           <Canvas shadows camera={{ position: [0, 0, 20], fov: 30 }}>
             <color attach='background' args={["#000000"]} />
             {gameState && (

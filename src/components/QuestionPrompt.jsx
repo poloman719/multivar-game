@@ -1,9 +1,12 @@
-const QuestionPrompt = () => {
+import { useState } from "react";
+
+const QuestionPrompt = ({ question }) => {
+
   return (
     <div className="prompt">
       <div>
         <h1>Question</h1>
-        <p>What is 9 + 10?</p>
+        <p>{question.question}</p>
       </div>
     </div>
   )

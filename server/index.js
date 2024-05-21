@@ -33,13 +33,17 @@ class User {
     io.emit("damage", this.id);
     if (this.health <= 0) {
       const remaining = users.filter((user) => user.health > 0);
-      io.emit("kill", this.id);
+      kill(this.id);
       users = remaining;
       console.log(remaining);
       if (remaining.length == 1) {
         endGame(remaining[0]);
       }
     }
+  }
+
+  kill(id){
+    io.emit("kill", id);
   }
 
   move(vel) {
@@ -166,6 +170,9 @@ io.on("connection", (socket) => {
     const damaged = users.find((user) => user.id == id);
     if(damaged)
       damaged.damage();
+  });
+  socket.on("kill",(id)=>{
+    kill(id);
   });
   socket.on("move", (vel) => {
     const moved = users.find((user) => user.id == socket.sessionID);
