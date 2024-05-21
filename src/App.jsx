@@ -18,6 +18,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [gameState, setGameState] = useState(false);
   const [explodedShips, setExplodedShips] = useState([]);
+  const [question, setQuestion] = useState(null);
   
   useEffect(() => {
     socket.on("session", ({ sessionID }) => {
@@ -93,6 +94,9 @@ function App() {
       },4000);
       console.log(lines);
     });
+    socket.on('question', (question) => {
+      setQuestion(question);
+    })
 
     return () => {
       socket.off("connect", onConnect);

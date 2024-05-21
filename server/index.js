@@ -42,10 +42,6 @@ class User {
     }
   }
 
-  kill(id){
-    io.emit("kill", id);
-  }
-
   move(vel) {
     this.velocity = vel;
     io.emit("move", this.id, vel);
@@ -65,7 +61,9 @@ const endGame = remaining =>{
           users = [];
         },5000);
 }; 
-
+kill = (id) => {
+  io.emit("kill", id);
+}
 var users = [];
 // structure: { name, id, health, position, velocity (not time, that is handled on server) }
 let gameState = false;
