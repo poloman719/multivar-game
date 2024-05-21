@@ -7,7 +7,7 @@ export default defineConfig({
   server:{
     proxy:{
       '/socket.io':{
-        target:"ws://localhost:3000",
+        target:"https://multivar-server.onrender.com/",
         ws:true
       }
     }
