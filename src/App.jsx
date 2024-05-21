@@ -7,31 +7,19 @@ import { Raycaster, TextureLoader } from "three";
 import { useLoader } from "@react-three/fiber";
 import { socket } from "./socket";
 import { Vector3 } from "three";
+import QuestionPrompt from "./components/QuestionPrompt";
 
 export const LineContext = createContext(null);
 
 function App() {
-  const [isConnected, setIsConnected] = useState(socket.connected);
   const [lines, setLines] = useState([]);
   const [ships, setShips] = useState([]);
   const [users, setUsers] = useState([]);
   const [user, setUser] = useState(null);
   const [gameState, setGameState] = useState(false);
   const [explodedShips, setExplodedShips] = useState([]);
-  const texture = useLoader(TextureLoader, "explosion.png");
   
   useEffect(() => {
-    function onConnect() {
-      setIsConnected(true);
-    }
-
-    function onDisconnect() {
-      setIsConnected(false);
-    }
-
-    socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
-    
     socket.on("session", ({ sessionID }) => {
       // attach the session ID to the next reconnection attempts
       socket.auth = { sessionID };
@@ -152,17 +140,18 @@ function App() {
   console.log(user);
   return (
     <>
-      {(isConnected&&user)?
+      {(gameState)?
       <div className='app'>
         <LineContext.Provider value={lines}>
           {users!=null? <SideBar
             fire={fire}
             move={move}
-            TEMPORARY={users}
+            users={users}
             loggedIn={user}
             isHost={user?.host}
             gameState={gameState}
           /> : <h1>Loading...</h1>}
+          <QuestionPrompt />
           <Canvas shadows camera={{ position: [0, 0, 20], fov: 30 }}>
             <color attach='background' args={["#000000"]} />
             {gameState && (
@@ -171,7 +160,7 @@ function App() {
           </Canvas>
         </LineContext.Provider>
       </div>
-      : <Lobby/>}
+      : <Lobby users={users} user={user} isHost={user?.host} gameState={gameState}/>}
     </>
   );
 }

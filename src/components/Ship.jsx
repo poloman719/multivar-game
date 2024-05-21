@@ -29,6 +29,9 @@ export const Ship = ({ data, addShip, exploded }) => {
       ship.current.position.x += data.velocity[0] * delta
       ship.current.position.y += data.velocity[1] * delta
       ship.current.position.z += data.velocity[2] * delta
+      hitBox.current.position.x += data.velocity[0] * delta
+      hitBox.current.position.y += data.velocity[1] * delta
+      hitBox.current.position.z += data.velocity[2] * delta
     }
     ship.current.lookAt(state.camera.position);
     ship.current.rotateZ(-Math.PI / 2);
