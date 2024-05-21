@@ -57,7 +57,7 @@ const endGame = remaining =>{
 }; 
 const kill = (id) => {
   io.emit("kill", id);
-  const remaining = users.filter((user) => user != id);
+  const remaining = users.filter((user) => user.id != id);
   users = remaining;
   if (remaining.length == 1) {
     endGame(remaining[0]);
