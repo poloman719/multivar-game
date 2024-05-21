@@ -5,6 +5,7 @@ const Lobby = ({ users, user, isHost, gameState }) => {
   const [username, setUsername] = useState(null);
   const sessionID = localStorage.getItem("sessionID");
   const [gameStarted, setGameStarted] = useState(false);
+  const [error, setError] = useState("");
   console.log(sessionID);
   console.log(users);
 
@@ -69,6 +70,7 @@ const Lobby = ({ users, user, isHost, gameState }) => {
       ) : (
         <h1 className='lobby'>The game has already started.</h1>
       )}
+      <p>{error}</p>
     </>
   );
 };

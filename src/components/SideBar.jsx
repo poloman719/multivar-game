@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Vector3 } from "three";
 import { socket } from "../socket";
 
-const SideBar = ({ fire, move, users, isHost, gameState,kill }) => {
+const SideBar = ({ fire, move, users, isHost, gameState}) => {
   const [a, setA] = useState("");
   const [b, setB] = useState("");
   const [c, setC] = useState("");
@@ -74,12 +74,16 @@ const SideBar = ({ fire, move, users, isHost, gameState,kill }) => {
     setC("");
   };
 
+  const killHandler = id =>{
+    socket.emit("kill",id);
+  }
+
   return (
     <div className='sidebar'>
       <h2>Players</h2>
       <ul>
         {users?.map((user) => (
-          <li key={user.id}>{user.name}{isHost&&<button onClick={kill(user.id)}>Murder</button>}</li>
+          <li key={user.id}>{user.name}{isHost&&<button onClick={killHandler(user.id)}>Murder</button>}</li>
         ))}
       </ul>
       {/* {!loggedIn && <button onClick={addUser}>Add User</button>} */}

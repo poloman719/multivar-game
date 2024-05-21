@@ -54,9 +54,6 @@ function App() {
         return users;
       });
     });
-    socket.on("kill", (id) => {
-      kill(id);
-    });
     socket.on("end_game", (winner) => {
       if(winner=="bruh")
         console.log("host killed the game because they stink");
@@ -94,6 +91,9 @@ function App() {
       },4000);
       console.log(lines);
     });
+    socket.on("kill",id=>{
+      kill(id);
+    })
     socket.on('question', (question) => {
       setQuestion(question);
     })
@@ -132,9 +132,7 @@ function App() {
   const move = (val) => {
     console.log(val);
   };
-
-  const kill = id=>{
-    socket.emit("kill",id);
+  const kill = (id) =>{
     // const deadpos = user.positon;
     console.log(id+" dieded lmao");
     setExplodedShips(state => [...state, id]);
@@ -160,7 +158,6 @@ function App() {
             loggedIn={user}
             isHost={user?.host}
             gameState={gameState}
-            kill={kill}
           /> : <h1>Loading...</h1>}
           <QuestionPrompt question={{ question: "What is 9 + 10?", answer: "21"}}/>
           <Canvas shadows camera={{ position: [0, 0, 20], fov: 30 }}>
