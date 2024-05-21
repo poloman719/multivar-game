@@ -49,7 +49,7 @@ const Lobby = ({ users, user, isHost, gameState }) => {
       {!gameStarted ? (
         <div className='lobby'>
           <h1>MULTIVAR GAME</h1>
-          <h3>Players</h3>
+          {users && <h3>Players</h3>}
           {users? <ul>
           {users?.map((user) => (
           <li key={user.id}><div>{user.name}</div></li>
