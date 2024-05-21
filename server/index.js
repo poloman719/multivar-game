@@ -123,9 +123,13 @@ io.on("connection", (socket) => {
       sendUsers();
   }
   socket.on("add_user", (value) => {
+    if(!gameState){
     const newUser = new User(value, socket.sessionID, users.length == 0);
     users.push(newUser);
     io.sockets.emit("new_user", newUser);
+    }
+    else
+    socket.emit("late",()=>{console.log(socket.id+" was late to the game rip bozo")});
   });
   socket.on("recover_user", ()=>{
     for(const user of users){
