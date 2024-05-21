@@ -61,7 +61,7 @@ const endGame = remaining =>{
           users = [];
         },5000);
 }; 
-kill = (id) => {
+const kill = (id) => {
   io.emit("kill", id);
 }
 var users = [];
