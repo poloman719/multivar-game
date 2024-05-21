@@ -11,6 +11,7 @@ const randomId = () => crypto.randomBytes(8).toString("hex");
 const io = new Server(server, {
   cors: {
     origin: "*",
+    
   },
   connectionStateRecovery:{
     maxDisconnectionDuration:2*60*1000,
