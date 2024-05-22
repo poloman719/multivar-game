@@ -18,6 +18,14 @@ const io = new Server(server, {
   }
 });
 
+const questions = [
+  { number: 1, question: "What is 9 + 10?", answer: "21"},
+  { number: 2, question: "What is 5 + 10?", answer: "15"},
+  { number: 3, question: "Who are the people in paris?", answer: "emmanuel macron"},
+  { number: 4, question: "What is 5 times 3?", answer: "15"},
+  { number: 5, question: "What is 2 + 2?", answer: "5"}
+]
+
 class User {
   constructor(n, i, h = false) {
     this.name = n;
@@ -27,6 +35,7 @@ class User {
     this.velocity = null;
     this.host = h;
     this.hits = 0;
+    this.gotQuestions = [];
   }
 
   damage(hitterID) {
@@ -189,7 +198,14 @@ io.on("connection", (socket) => {
     }
   });
   socket.on("get_question", () => {
-    socket.emit("question", { number: 1, question: "What is 9 + 10?", answer: "21"})
-    //dummy question
+    const user = users.find((user) => user.id == socket.sessionID)
+    const remainingQuestions = questions.filter(question => user.gotQuestions.includes(question.number));
+    if (remainingQuestions == 0) {
+      remainingQuestions = questions;
+    }
+    const rand = Math.floor(Math.random() * (remainingQuestions.length) );
+    const question = remainingQuestions[rand];
+    user.gotQuestions.push(question.number);
+    socket.emit("question", question);
   })
 });

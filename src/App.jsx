@@ -18,8 +18,9 @@ function App() {
   const [user, setUser] = useState(null);
   const [gameState, setGameState] = useState(false);
   const [explodedShips, setExplodedShips] = useState([]);
-  const [question, setQuestion] = useState({ number: 1, question: "What is 9 + 10?", answer: "21"});
+  const [question, setQuestion] = useState(null);
   const [mode, setMode] = useState(null);
+  const [answering, setAnswering] = useState(true);
   
   useEffect(() => {
     socket.on("session", ({ sessionID }) => {
@@ -184,9 +185,10 @@ function App() {
             loggedIn={user}
             isHost={user?.host}
             gameState={gameState}
-            setMode={setMode}
+            answering={answering}
+            setAnswering={setAnswering}
           /> : <h1>Loading...</h1>}
-          {question && <QuestionPrompt users={users} question={question} markCorrect={escapePrompt} mode={mode}/>}
+          {question && <QuestionPrompt users={users} question={question} markCorrect={escapePrompt} setAnswering={setAnswering} answering={answering}/>}
           <Canvas shadows camera={{ position: [0, 0, 20], fov: 30 }}>
             <color attach='background' args={["#000000"]} />
             {gameState && (
