@@ -11,17 +11,17 @@ const SideBar = ({ users, isHost, gameState, answering, setAnswering }) => {
   
   const onA = (e) => {
     // e.target.value = Math.round(e.target.value);
-    if(e.target.value<=2 && e.target.value>=-2)
+    // if(e.target.value<=2 && e.target.value>=-2)
       setA(e.target.value);
   };
   const onB = (e) => {
     // e.target.value = Math.round(e.target.value);
-    if(e.target.value<=2 && e.target.value>=-2)
+    // if(e.target.value<=2 && e.target.value>=-2)
       setB(e.target.value);
   };
   const onC = (e) => {
     // e.target.value = Math.round(e.target.value);
-    if(e.target.value<=2 && e.target.value>=-2)
+    // if(e.target.value<=2 && e.target.value>=-2)
       setC(e.target.value);
   };
 

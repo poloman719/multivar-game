@@ -66,7 +66,7 @@ function App() {
         }
       const usersWithMaxHits = users.filter((user)=>user.hits==maxHits);
       let definitiveWinner = null;
-      let definitiveWinners = null;
+      let definitiveWinners = usersWithMaxHits;
       if(usersWithMaxHits.length>1) {
         let highestHealth = 0;
         for(const user of usersWithMaxHits){
@@ -82,7 +82,9 @@ function App() {
         alert(`${definitiveWinner.name} has won!`);
       else {
         let str = "The following people have tied for 1st place: ";
-        definitiveWinners.forEach((winner)=>str = str+winner+", ");
+        for(winner of definitiveWinners){
+          str+=winner+", ";
+        }
         str = str.substring(0,str.length-2);
         alert(str);
       }
@@ -153,11 +155,8 @@ function App() {
     });
   };
 
-  const kill = (id, killerID) =>{
-    // const deadpos = user.positon;
-    const killed = users.find((user)=>user.id==id);
-    const killer = users.find((user)=>user.id==killerID);
-    alert(`${killed.name} has been blown up by ${killer.name}!`);
+  const kill = (id, killerID, killedName, killerName) => {
+    alert(`${killedName} has been blown up by ${killerName}!`);
     // console.log(id+" dieded lmao");
     setExplodedShips(state => [...state, id]);
     setTimeout(() => {
@@ -169,7 +168,7 @@ function App() {
     // change texture of killed to explosion and set timeout to delete explosion
   };
 
-  const escapePrompt = ()=>{
+  const escapePrompt = () => {
     setQuestion(null);
   }
 

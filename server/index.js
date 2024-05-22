@@ -30,7 +30,7 @@ class User {
   constructor(n, i, h = false) {
     this.name = n;
     this.id = i;
-    this.health = 100;
+    this.health = 30;
     this.position = null;
     this.velocity = null;
     this.host = h;
@@ -39,12 +39,15 @@ class User {
   }
 
   damage(hitterID) {
-    //mightve deleted something woopsies
     this.health -= 10;
     io.emit("damage", this.id, hitterID);
     if (this.health <= 0) {
       kill(this.id);
     }
+    const hitter = users.find((user)=>{
+      return user.id==hitterID
+    });
+    hitter.hits = hitter.hits + 1;
   }
 
   move(vel) {
@@ -67,7 +70,9 @@ const endGame = remaining =>{
         },5000);
 }; 
 const kill = (id, killerID) => {
-  io.emit("kill", id, killerID);
+  const killed = users.find((user) => user.id == killerID)
+  const killer = users.find((user) => user.id == killerID)
+  io.emit("kill", id, killerID, killed.name, killer.name);
   const remaining = users.filter((user) => user.id != id);
   users = remaining;
   if (remaining.length == 1) {

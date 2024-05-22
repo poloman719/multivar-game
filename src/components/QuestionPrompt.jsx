@@ -5,15 +5,19 @@ const QuestionPrompt = ({ question, markCorrect, setAnswering, answering }) => {
   const [response, setResponse] = useState("");
   const [answer, setAnswer] = useState(null);
   const [renderedAnswer, setRenderedAnswer] = useState("");
+  const [buttonStatus, setButtonStatus] = useState("");
 
   const handleSubmit = e => {
     e.preventDefault();
     setRenderedAnswer(answer);
     if (answer==question.answer) {
       setResponse("Correct!");
-    } else
+      setAnswering(false);
+      setButtonStatus("Close");
+    } else{
       setResponse("WRONG! Looks like SOMEONE needs to go back to MATH SCHOOL...");
-    setAnswering(false);
+      setButtonStatus("Retry");
+    }
   };
 
   return (
@@ -27,10 +31,9 @@ const QuestionPrompt = ({ question, markCorrect, setAnswering, answering }) => {
         </form>}
         <p>Your answer: <b>{renderedAnswer}</b></p>
         <p>{response}</p>
-        {!answering && <button onClick={()=>{markCorrect();setResponse("");}}>Close</button>}
+        {response && <button onClick={()=>{if(response=="Correct!") markCorrect();setResponse("");}}>Close</button>}
         </div>
         <div>
-      
       </div>
     </div>
   )
