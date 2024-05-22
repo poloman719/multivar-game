@@ -199,7 +199,7 @@ io.on("connection", (socket) => {
   });
   socket.on("get_question", () => {
     const user = users.find((user) => user.id == socket.sessionID)
-    const remainingQuestions = questions.filter(question => user.gotQuestions.includes(question.number));
+    let remainingQuestions = questions.filter(question => user.gotQuestions.includes(question.number));
     if (remainingQuestions == 0) {
       remainingQuestions = questions;
     }

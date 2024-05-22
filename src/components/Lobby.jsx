@@ -60,7 +60,7 @@ const Lobby = ({ users, user, isHost, gameState }) => {
               className='usernameInput'
               name='input'
               placeholder='Username'
-              maxlength="26"
+              maxLength="26"
               onChange={(e) => setUsername(e.target.value)}
             />
             <button className='lobbyButton'>Join!</button>
