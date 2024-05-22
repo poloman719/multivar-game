@@ -18,7 +18,8 @@ function App() {
   const [user, setUser] = useState(null);
   const [gameState, setGameState] = useState(false);
   const [explodedShips, setExplodedShips] = useState([]);
-  const [question, setQuestion] = useState(null);
+  const [question, setQuestion] = useState({ number: 1, question: "What is 9 + 10?", answer: "21"});
+  const [mode, setMode] = useState(null);
   
   useEffect(() => {
     socket.on("session", ({ sessionID }) => {
@@ -55,8 +56,37 @@ function App() {
       });
     });
     socket.on("end_game", (winner) => {
-      if(winner=="bruh")
-        console.log("host killed the game because they stink");
+      if(winner=="bruh"){
+      console.log("host killed the game because they stink");
+      let maxHits = 0;
+        for(const user of users){
+          if(user.hits>maxHits)
+            maxHits = user.hits;
+        }
+      const usersWithMaxHits = users.filter((user)=>user.hits==maxHits);
+      let definitiveWinner = null;
+      let definitiveWinners = null;
+      if(usersWithMaxHits.length>1) {
+        let highestHealth = 0;
+        for(const user of usersWithMaxHits){
+          if(user.health>highestHealth) highestHealth=user.health;
+        }
+        const usersWithHighestHealth = users.filter((user)=>user.health==highestHealth);
+        if(usersWithHighestHealth.length==1)
+          definitiveWinner=usersWithHighestHealth[0];
+        else definitiveWinners = usersWithHighestHealth;
+      }
+      else definitiveWinner=usersWithMaxHits[0];
+      if(definitiveWinner)
+        alert(`${definitiveWinner.name} has won!`);
+      else {
+        let str = "The following people have tied for 1st place: ";
+        definitiveWinners.forEach((winner)=>str = str+winner+", ");
+        str = str.substring(0,str.length-2);
+        alert(str);
+      }
+      console.log(mode);
+    }
       else {
         console.log(winner.name+" has won!");
       }
@@ -73,9 +103,10 @@ function App() {
     socket.on("stop", (id, position) => {
       setUsers(state => state.map(user => user.id == id ? {...user, velocity: 0, position: position} : user))
     });
-    socket.on("damage", (id) => {
+    socket.on("damage", (id, hitterID) => {
       console.log(`player with id of ${id} hit!`);
-      setUsers(state => state.map(user => user.id == id ? {...user, health: user.health - 10} : user))
+      setUsers(state => state.map(user => user.id == id ? {...user, health: user.health - 10} : user));
+      setUsers(state => state.map(user => user.id == hitterID ? {...user, hits: user.hits+1} : user));
     });
     socket.on('fire', (userFiring, line) => {
       console.log("recieved fire!!!");
@@ -91,17 +122,13 @@ function App() {
       },4000);
       console.log(lines);
     });
-    socket.on("kill",id=>{
-      kill(id);
+    socket.on("kill",(id,killerID)=>{
+      kill(id,killerID);
     })
     socket.on('question', (question) => {
       setQuestion(question);
+      console.log("banana")
     })
-
-    return () => {
-      socket.off("connect", onConnect);
-      socket.off("disconnect", onDisconnect);
-    };
   }, []);
 
   const LineCheck = (origin, direction, ships) => {
@@ -125,16 +152,12 @@ function App() {
     });
   };
 
-  const fire = (val) => {
-    LineCheck(val[0], val[1], ships);
-  };
-
-  const move = (val) => {
-    console.log(val);
-  };
-  const kill = (id) =>{
+  const kill = (id, killerID) =>{
     // const deadpos = user.positon;
-    console.log(id+" dieded lmao");
+    const killed = users.find((user)=>user.id==id);
+    const killer = users.find((user)=>user.id==killerID);
+    alert(`${killed.name} has been blown up by ${killer.name}!`);
+    // console.log(id+" dieded lmao");
     setExplodedShips(state => [...state, id]);
     setTimeout(() => {
       setExplodedShips(state => state.filter(ship => ship.id != id))
@@ -145,21 +168,25 @@ function App() {
     // change texture of killed to explosion and set timeout to delete explosion
   };
 
-  console.log(user);
+  const escapePrompt = ()=>{
+    setQuestion(null);
+  }
+
+  console.log(mode);
+  
   return (
     <>
       {(gameState)?
       <div className='app'>
         <LineContext.Provider value={lines}>
           {users!=null? <SideBar
-            fire={fire}
-            move={move}
             users={users}
             loggedIn={user}
             isHost={user?.host}
             gameState={gameState}
+            setMode={setMode}
           /> : <h1>Loading...</h1>}
-          <QuestionPrompt question={{ question: "What is 9 + 10?", answer: "21"}}/>
+          {question && <QuestionPrompt users={users} question={question} markCorrect={escapePrompt} mode={mode}/>}
           <Canvas shadows camera={{ position: [0, 0, 20], fov: 30 }}>
             <color attach='background' args={["#000000"]} />
             {gameState && (

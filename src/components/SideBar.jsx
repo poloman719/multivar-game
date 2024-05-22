@@ -1,29 +1,12 @@
 import { useState } from "react";
-import { Vector3 } from "three";
 import { socket } from "../socket";
 
-const SideBar = ({ fire, move, users, isHost, gameState}) => {
+const SideBar = ({ users, isHost, gameState, setMode }) => {
   const [a, setA] = useState("");
   const [b, setB] = useState("");
   const [c, setC] = useState("");
   const [para, setPara] = useState(true);
   const [error, setError] = useState("");
-  
-  const onA = (e) => {
-    // e.target.value = Math.round(e.target.value);
-    if(e.target.value<=2 && e.target.value>=-2)
-      setA(e.target.value);
-  };
-  const onB = (e) => {
-    // e.target.value = Math.round(e.target.value);
-    if(e.target.value<=2 && e.target.value>=-2)
-      setB(e.target.value);
-  };
-  const onC = (e) => {
-    // e.target.value = Math.round(e.target.value);
-    if(e.target.value<=2 && e.target.value>=-2)
-      setC(e.target.value);
-  };
   
   // const addUser = () => {
   //   socket.emit("add_user", userInput.current.value);
@@ -51,27 +34,14 @@ const SideBar = ({ fire, move, users, isHost, gameState}) => {
   }
 
   const fireHandler = () => {
-    if (!(a && b && c)) return;
-    // fire([
-    //   new Vector3(parseInt(xi), parseInt(zi), parseInt(yi)),
-    //   new Vector3(parseInt(a), parseInt(c), parseInt(b)),
-    // ]);
-    const fireData = [parseFloat(a), parseFloat(c), parseFloat(b)];
-
-    socket.emit("fire",fireData);
-    setPara((para) => (Math.random() < 0.75 ? !para : para));
-    setA("");
-    setB("");
-    setC("");
+    console.log("bru");
+    setMode("fire");
+    socket.emit("get_question");
   };
 
   const moveHandler = () => {
-    if (!(a && b && c)) return;
-    socket.emit("move", [parseFloat(a), parseFloat(c), parseFloat(b)]);
-    setPara((para) => (Math.random() < 0.75 ? !para : para));
-    setA("");
-    setB("");
-    setC("");
+    setMode("move");
+    socket.emit("get_question");
   };
 
   const killHandler = id => {
@@ -89,45 +59,6 @@ const SideBar = ({ fire, move, users, isHost, gameState}) => {
       {/* {!loggedIn && <button onClick={addUser}>Add User</button>} */}
       {!gameState && isHost && <button onClick={startGame}>Start Game</button> }
       {gameState && isHost && <button onClick={endGame}>End Game</button>}
-      {gameState && (para ? (
-        <div>
-          x = x<sub>0</sub> +{" "}
-          <input max="2" min="-2" type='number' onChange={onA} value={a} />t
-        </div>
-      ) : (
-        <div className='frac'>
-          <div className='frac-top'>
-            x - x<sub>0</sub>
-          </div>
-          <input max="2" min="-2" className='frac-bot' type='number' onChange={onA} value={a} />=
-        </div>
-      ))}
-      {gameState && (para ? (
-        <div>
-          y = y<sub>0</sub> +{" "}
-          <input max="2" min="-2" type='number' onChange={onB} value={b} />t
-        </div>
-      ) : (
-        <div className='frac'>
-          <div className='frac-top'>
-            y - y<sub>0</sub>
-          </div>
-          <input max="2" min="-2" className='frac-bot' type='number' onChange={onB} value={b} />=
-        </div>
-      ))}
-      {gameState && (para ? (
-        <div>
-          z = z<sub>0</sub> +{" "}
-          <input max="2" min="-2" type='number' onChange={onC} value={c} />t
-        </div>
-      ) : (
-        <div className='frac'>
-          <div className='frac-top'>
-            z - z<sub>0</sub>
-          </div>
-          <input max="2" min="-2" className='frac-bot' type='number' onChange={onC} value={c} />
-        </div>
-      ))}
       {gameState && <button onClick={fireHandler}>Fire!</button>}
       {gameState && <button onClick={moveHandler}>Move!</button>}
       <p>{error}</p>

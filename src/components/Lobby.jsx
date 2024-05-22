@@ -55,7 +55,7 @@ const Lobby = ({ users, user, isHost, gameState }) => {
           <li key={user.id}><div>{user.name}</div></li>
           ))}
           </ul> : <p>No players ☹</p>}
-          {!user && <form onSubmit={handleSubmit}>
+          {!user && <form onSubmit={handleSubmit} className="userform">
             <input
               className='usernameInput'
               name='input'
@@ -66,11 +66,11 @@ const Lobby = ({ users, user, isHost, gameState }) => {
           </form>
           }
           {(!gameState && user) && (isHost ? (<button onClick={startGame}>Start Game</button>) : (<p>Please wait for the host to start the game.</p>)) }
+          <p style={{color:'red'}}> {error}</p>
         </div>
       ) : (
         <h1 className='lobby'>The game has already started.</h1>
       )}
-      <p>{error}</p>
     </>
   );
 };

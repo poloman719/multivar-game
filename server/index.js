@@ -26,11 +26,13 @@ class User {
     this.position = null;
     this.velocity = null;
     this.host = h;
+    this.hits = 0;
   }
 
-  damage() {
+  damage(hitterID) {
+    //mightve deleted something woopsies
     this.health -= 10;
-    io.emit("damage", this.id);
+    io.emit("damage", this.id, hitterID);
     if (this.health <= 0) {
       kill(this.id);
     }
@@ -55,8 +57,8 @@ const endGame = remaining =>{
           users = [];
         },5000);
 }; 
-const kill = (id) => {
-  io.emit("kill", id);
+const kill = (id, killerID) => {
+  io.emit("kill", id, killerID);
   const remaining = users.filter((user) => user.id != id);
   users = remaining;
   if (remaining.length == 1) {
@@ -165,11 +167,12 @@ io.on("connection", (socket) => {
   })
   socket.on("damage", (id) => {
     const damaged = users.find((user) => user.id == id);
+    const hitterId = socket.sessionID;
     if(damaged)
-      damaged.damage();
+      damaged.damage(hitterId);
   });
   socket.on("kill",(id)=>{
-    kill(id);
+    kill(id, socket.sessionID);
   });
   socket.on("move", (vel) => {
     const moved = users.find((user) => user.id == socket.sessionID);
@@ -184,6 +187,9 @@ io.on("connection", (socket) => {
     console.log(position[0], position[1], position[2])
     io.emit("fire",userFiring,line);
     }
-  }
-)
+  });
+  socket.on("get_question", () => {
+    socket.emit("question", { number: 1, question: "What is 9 + 10?", answer: "21"})
+    //dummy question
+  })
 });
