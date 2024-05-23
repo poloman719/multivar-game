@@ -48,7 +48,7 @@ const Lobby = ({ users, user, isHost, gameState }) => {
     <>
       {!gameStarted ? (
         <div className='lobby'>
-          <h1>MULTIVAR GAME</h1>
+          <h1>INTERGALACTIC LINE BATTLE</h1>
           {users && <h3>Players</h3>}
           {users? <ul>
           {users?.map((user) => (

@@ -92,7 +92,7 @@ const QuestionPrompt = ({ question, markCorrect, setAnswering }) => {
         <p>{question.question}</p>
         {!response && (
           <form onSubmit={handleSubmit}>
-            {type == "reg" && (
+            {!type && (
               <input onChange={(e) => setAnswer(e.target.value)} type='text' />
             )}
             {/* {type == "line" && (

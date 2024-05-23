@@ -9,6 +9,7 @@ import { socket } from "./socket";
 import { Vector3 } from "three";
 import QuestionPrompt from "./components/QuestionPrompt";
 import Laser from "./components/Laser";
+import hitWarning from "./assets/youve_been_hit.gif";
 
 export const LineContext = createContext(null);
 
@@ -22,7 +23,9 @@ function App() {
   const [question, setQuestion] = useState(null);
   const [mode, setMode] = useState(null);
   const [answering, setAnswering] = useState(true);
-  
+  const [messageBoard, setMessageBoard] = useState([]);
+  const [justHit, setJustHit] = useState(false);
+
   useEffect(() => {
     socket.on("session", ({ sessionID }) => {
       // attach the session ID to the next reconnection attempts
@@ -34,20 +37,20 @@ function App() {
     socket.on("users", (value, callback) => {
       setUsers(value);
       callback({
-        status:"recieved"
+        status: "recieved",
       });
-      console.log("sending callback");  
+      console.log("sending callback");
     });
     socket.on("new_user", (value) => {
-      console.log("NEW USER")
+      console.log("NEW USER");
       setUsers((state) => [...state, value]);
       if (value.id == localStorage.getItem("sessionID")) setUser(value);
     });
-    socket.on("recieve_existing_user",(value, gameState)=>{
+    socket.on("recieve_existing_user", (value, gameState) => {
       console.log("USER_RECONNECTED");
       if (value.id == localStorage.getItem("sessionID")) setUser(value);
       setGameState(gameState);
-    })
+    });
     socket.on("start_game", (positions) => {
       setUsers((users) => {
         users.forEach((user, i) => {
@@ -58,82 +61,96 @@ function App() {
       });
     });
     socket.on("end_game", (winner) => {
-      if(winner=="bruh"){
-      console.log("host killed the game because they stink");
-      let maxHits = 0;
-        for(const user of users){
-          if(user.hits>maxHits)
-            maxHits = user.hits;
+      if (winner == "bruh") {
+        updateBoard("The host has ended the game.");
+        // console.log("host killed the game because they stink");
+        let maxHits = 0;
+        for (const user of users) {
+          if (user.hits > maxHits) maxHits = user.hits;
         }
-      const usersWithMaxHits = users.filter((user)=>user.hits==maxHits);
-      let definitiveWinner = null;
-      let definitiveWinners = usersWithMaxHits;
-      if(usersWithMaxHits.length>1) {
-        let highestHealth = 0;
-        for(const user of usersWithMaxHits){
-          if(user.health>highestHealth) highestHealth=user.health;
-        }
-        const usersWithHighestHealth = users.filter((user)=>user.health==highestHealth);
-        if(usersWithHighestHealth.length==1)
-          definitiveWinner=usersWithHighestHealth[0];
-        else definitiveWinners = usersWithHighestHealth;
-      }
-      else definitiveWinner=usersWithMaxHits[0];
-      // if(definitiveWinner)
-      //   // alert(`${definitiveWinner.name} has won!`);
-      // else {
-      //   let str = "The following people have tied for 1st place: ";
-      //   for(winner of definitiveWinners){
-      //     str+=winner+", ";
-      //   }
-      //   str = str.substring(0,str.length-2);
-      //   // alert(str);
-      // }
-      console.log(mode);
-    }
-      else {
-        console.log(winner.name+" has won!");
+        const usersWithMaxHits = users.filter((user) => user.hits == maxHits);
+        let definitiveWinner = null;
+        let definitiveWinners = usersWithMaxHits;
+        if (usersWithMaxHits.length > 1) {
+          let highestHealth = 0;
+          for (const user of usersWithMaxHits) {
+            if (user.health > highestHealth) highestHealth = user.health;
+          }
+          const usersWithHighestHealth = users.filter(
+            (user) => user.health == highestHealth
+          );
+          if (usersWithHighestHealth.length == 1)
+            definitiveWinner = usersWithHighestHealth[0];
+          else definitiveWinners = usersWithHighestHealth;
+        } else definitiveWinner = usersWithMaxHits[0];
+        // if(definitiveWinner)
+        //   // alert(`${definitiveWinner.name} has won!`);
+        // else {
+        //   let str = "The following people have tied for 1st place: ";
+        //   for(winner of definitiveWinners){
+        //     str+=winner+", ";
+        //   }
+        //   str = str.substring(0,str.length-2);
+        //   // alert(str);
+        // }
+        console.log(mode);
+      } else {
+        updateBoard(`${winner.name} has won!`);
+        // console.log(winner.name+" has won!");
       }
       setTimeout(() => {
         setGameState(false);
         setUsers([]);
         setUser(null);
+        setExplodedShips([]);
       }, 5000);
       // setUsers([]);
     });
     socket.on("move", (id, vel) => {
-      setUsers(state => state.map(user => user.id == id ? {...user, velocity: vel} : user))
+      setUsers((state) =>
+        state.map((user) => (user.id == id ? { ...user, velocity: vel } : user))
+      );
     });
     socket.on("stop", (id, position) => {
-      setUsers(state => state.map(user => user.id == id ? {...user, velocity: 0, position: position} : user))
+      setUsers((state) =>
+        state.map((user) =>
+          user.id == id ? { ...user, velocity: 0, position: position } : user
+        )
+      );
     });
     socket.on("damage", (id, hitterID) => {
-      console.log(`player with id of ${id} hit!`);
-      setUsers(state => state.map(user => user.id == id ? {...user, health: user.health - 10} : user));
-      setUsers(state => state.map(user => user.id == hitterID ? {...user, hits: user.hits+1} : user));
+      damage(id, hitterID);
+      setUsers((state) =>
+        state.map((user) =>
+          user.id == id ? { ...user, health: user.health - 10 } : user
+        )
+      );
+      setUsers((state) =>
+        state.map((user) =>
+          user.id == hitterID ? { ...user, hits: user.hits + 1 } : user
+        )
+      );
     });
-    socket.on('fire', (userFiring, line) => {
+    socket.on("fire", (userFiring, line) => {
       console.log("recieved fire!!!");
-      const newLine = [userFiring.position,line];
-      const filteredShips = ships.filter(a=> a!=userFiring);
+      const newLine = [userFiring.position, line];
+      const filteredShips = ships.filter((a) => a != userFiring);
       console.log(filteredShips);
       LineCheck(userFiring.position, line, filteredShips);
-      setLines((lines)=>[
-        ...lines,newLine
-      ]);
-      setTimeout(()=>{
-        setLines(lines=>lines.filter(a=> a!=newLine));
-      },4000);
+      setLines((lines) => [...lines, newLine]);
+      setTimeout(() => {
+        setLines((lines) => lines.filter((a) => a != newLine));
+      }, 4000);
       console.log(lines);
     });
-    socket.on("kill",(id,killerID, killedName, killerName)=>{
-      kill(id,killerID, killedName, killerName);
-    })
-    socket.on('question', (question) => {
+    socket.on("kill", (id, killerID, killedName, killerName) => {
+      kill(id, killerID, killedName, killerName);
+    });
+    socket.on("question", (question) => {
       setQuestion(question);
-      console.log("banana")
-    })
-  }, []);
+      console.log("banana");
+    });
+  }, [user]);
 
   const LineCheck = (origin, direction, ships) => {
     origin = new Vector3(origin[0], origin[1], origin[2]);
@@ -144,7 +161,7 @@ function App() {
     const obj = intersections[0].object;
     obj.scale.set(1, 1, 1);
     const id = obj.userData.id;
-    console.log("emitting damage to id: "+id);
+    console.log("emitting damage to id: " + id);
     socket.emit("damage", id);
     return intersections[0].point;
   };
@@ -157,13 +174,14 @@ function App() {
   };
 
   const kill = (id, killerID, killedName, killerName) => {
-    console.log(`${killedName} has been blown up by ${killerName}!`);
-    console.log(id+" dieded lmao");
-    setExplodedShips(state => [...state, id]);
+    updateBoard(`${killedName} has been blown up by ${killerName}!`);
+    // console.log(`${killedName} has been blown up by ${killerName}!`);
+    console.log(id + " dieded lmao");
+    setExplodedShips((state) => [...state, id]);
     setTimeout(() => {
-      setExplodedShips(state => state.filter(ship => ship.id != id))
-      setUsers(state => state.filter(user => user.id != id))
-    }, 3000)
+      setExplodedShips((state) => state.filter((ship) => ship.id != id));
+      setUsers((state) => state.filter((user) => user.id != id));
+    }, 3000);
     // const killedShip = ships.find((ship) => user.id == id);
 
     // change texture of killed to explosion and set timeout to delete explosion
@@ -171,36 +189,96 @@ function App() {
 
   const escapePrompt = () => {
     setQuestion(null);
-  }
+  };
 
-  console.log(mode);
-  console.log(user);
-  
-  return (
-    <>
-      {(gameState)?
-      <div className='app'>
-        <LineContext.Provider value={lines}>
-          {users!=null? <SideBar
+  const updateBoard = (message) => {
+    setMessageBoard((array) => {
+      array.push(message);
+      return array;
+    });
+    setTimeout(() => {
+      setMessageBoard(
+        messageBoard.filter((m) => {
+          m == message;
+        })
+      );
+    }, 5000);
+  };
+
+  const damage = (id, hitterID) => {
+    console.log(`player with id of ${id} hit!`);
+    console.log(user);
+    // console.log(user.id==id);
+    // console.log(socket.sessionID)
+    if (user.id == id) {
+      setJustHit(true);
+      setTimeout(() => {
+        setJustHit(false);
+      }, 9400);
+    }
+  };
+    console.log(mode);
+    console.log(user);
+
+    return (
+      <>
+        {gameState ? (
+          <div className='app'>
+            <LineContext.Provider value={lines}>
+              {users != null ? (
+                <SideBar
+                  users={users}
+                  loggedIn={user}
+                  isHost={user?.host}
+                  gameState={gameState}
+                  answering={answering}
+                  setAnswering={setAnswering}
+                />
+              ) : (
+                <h1>Loading...</h1>
+              )}
+              {question && (
+                <QuestionPrompt
+                  users={users}
+                  question={question}
+                  markCorrect={escapePrompt}
+                  setAnswering={setAnswering}
+                  answering={answering}
+                />
+              )}
+              <div className='messageBoard'>
+                {messageBoard.map((message) => (
+                  <p>{message}</p>
+                ))}
+              </div>
+              {justHit && (
+                <div id='warning-div'>
+                  <img id='warning' src={hitWarning} />
+                </div>
+              )}
+              <Canvas shadows camera={{ position: [0, 0, 20], fov: 30 }}>
+                <color attach='background' args={["#000000"]} />
+                {gameState && (
+                  <Experience
+                    ships={users}
+                    lines={lines}
+                    addShip={addShip}
+                    explodedShips={explodedShips}
+                    user={user}
+                  />
+                )}
+              </Canvas>
+            </LineContext.Provider>
+          </div>
+        ) : (
+          <Lobby
             users={users}
-            loggedIn={user}
+            user={user}
             isHost={user?.host}
             gameState={gameState}
-            answering={answering}
-            setAnswering={setAnswering}
-          /> : <h1>Loading...</h1>}
-          {question && <QuestionPrompt users={users} question={question} markCorrect={escapePrompt} setAnswering={setAnswering} answering={answering}/>}
-          <Canvas shadows camera={{ position: [0, 0, 20], fov: 30 }}>
-            <color attach='background' args={["#000000"]} />
-            {gameState && (
-              <Experience ships={users} lines={lines} addShip={addShip} explodedShips={explodedShips}/>
-            )}
-          </Canvas>
-        </LineContext.Provider>
-      </div>
-      : <Lobby users={users} user={user} isHost={user?.host} gameState={gameState}/>}
-    </>
-  );
-}
-
+          />
+        )}
+      </>
+    );
+};
 export default App;

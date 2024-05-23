@@ -114,6 +114,16 @@ button:hover {
   background-color: rgba(0, 0, 0, 0.5);
 }
 
+#warning{
+  width:50%;
+  height:auto;
+  z-index: 500;
+  position:absolute;
+  bottom:0vh;
+  left:25vw;
+  pointer-events: none;
+}
+
 .prompt-inner {
   background-color: white;
   width: 50%;
@@ -136,4 +146,14 @@ ul {
 
 .prompt div button {
   margin-top: 10px;
+}
+
+.messageBoard{
+  position:absolute;
+  color:white;
+  top:3%;
+  left:50%;
+  z-index: 300;
+  pointer-events: none;
+  text-align: center;
 }

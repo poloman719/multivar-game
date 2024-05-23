@@ -1,6 +1,6 @@
 import { useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 const useAnimation = (filepath, extension, frames, start) => {
   const [currFrame, setCurrFrame] = useState(start);

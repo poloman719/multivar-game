@@ -5,14 +5,10 @@ import useAnimation from "./useAnimation";
 import Laser from "./Laser";
 import { Quaternion, Vector3 } from "three";
 
-export const Experience = ({ lines, ships, addShip, explodedShips, target }) => {
+export const Experience = ({ lines, ships, addShip, explodedShips, target, user }) => {
   // const explosionTexture = useAnimation("explosion-animation/explosion0", "png", 67, 1);
   // const laserTexture = useAnimation("laser-animation/laser0","png",139, 1);
   // const muzzleFlashTexture = useAnimation("muzzle_flash-animation/muzzle flash0", "png", 33, 3);
-  
-  useEffect(() => {
-    console.log(lines)
-  }, [lines])
 
   return (
     <>
@@ -31,7 +27,8 @@ export const Experience = ({ lines, ships, addShip, explodedShips, target }) => 
         <planeGeometry />
         <meshBasicMaterial map={muzzleFlashTexture} transparent/>
       </mesh> */}
-      {ships?.map(ship => <Ship key={ship.id} data={ship} addShip={addShip} exploded={explodedShips?.includes(ship.id)}/>)}
+      {/* <Laser start={[-3,0,0]} end={[3,0,0]}/> */}
+      {ships?.map(ship => <Ship key={ship.id} data={ship} addShip={addShip} exploded={explodedShips?.includes(ship.id)} isYou={ship.id == user.id}/>)}
     </>
   );
 };

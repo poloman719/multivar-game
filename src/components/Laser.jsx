@@ -14,9 +14,9 @@ const Laser = ({ start, end }) => {
     distanceVecArr[2]
   );
   const [laserTexture, startLaserTexture] = useAnimation(
-    "laser-animation/laser sprite0",
+    "laser-animation/laserthing0",
     "png",
-    92,
+    115,
     1
   );
   const positionVec = new Vector3(start[0], start[1], start[2]).addScaledVector(
@@ -56,21 +56,31 @@ const Laser = ({ start, end }) => {
   }, []);
 
   return (
-    <mesh
-      position={positionVec}
-      scale={[distanceVec.length() * 1.7543, 5, 5]}
-      rotation={rotation}
-      ref={plane}
-    >
-      <planeGeometry />
-      <meshBasicMaterial
-        transparent
+    <>
+      <mesh
+        position={positionVec}
+        scale={[distanceVec.length() * 1.818, 5, 5]}
+        rotation={rotation}
         ref={plane}
-        map={laserTexture}
-        side={DoubleSide}
-        depthWrite={false}
-      />
-    </mesh>
+      >
+        <planeGeometry />
+        <meshBasicMaterial
+          transparent
+          ref={plane}
+          map={laserTexture}
+          side={DoubleSide}
+          depthWrite={false}
+        />
+      </mesh>
+      <mesh position={start} scale={0.05}>
+        <sphereGeometry />
+        <meshBasicMaterial />
+      </mesh>
+      <mesh position={end} scale={0.05}>
+        <sphereGeometry />
+        <meshBasicMaterial />
+      </mesh>
+    </>
   );
 };
 
