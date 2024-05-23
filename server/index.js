@@ -166,6 +166,7 @@ class User {
       kill(this.id, hitterID);
     }
     console.log(hitterID);
+    console.log(users)
     const hitter = users.find((user) => user.id == hitterID);
     console.log(hitter)
     hitter.hits++;
