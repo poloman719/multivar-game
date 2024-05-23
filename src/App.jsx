@@ -8,6 +8,7 @@ import { useLoader } from "@react-three/fiber";
 import { socket } from "./socket";
 import { Vector3 } from "three";
 import QuestionPrompt from "./components/QuestionPrompt";
+import Laser from "./components/Laser";
 
 export const LineContext = createContext(null);
 
@@ -173,6 +174,7 @@ function App() {
   }
 
   console.log(mode);
+  console.log(user);
   
   return (
     <>
