@@ -126,8 +126,8 @@ function App() {
       },4000);
       console.log(lines);
     });
-    socket.on("kill",(id,killerID)=>{
-      kill(id,killerID);
+    socket.on("kill",(id,killerID, killedName, killerName)=>{
+      kill(id,killerID, killedName, killerName);
     })
     socket.on('question', (question) => {
       setQuestion(question);
@@ -157,7 +157,7 @@ function App() {
   };
 
   const kill = (id, killerID, killedName, killerName) => {
-    // alert(`${killedName} has been blown up by ${killerName}!`);
+    console.log(`${killedName} has been blown up by ${killerName}!`);
     console.log(id+" dieded lmao");
     setExplodedShips(state => [...state, id]);
     setTimeout(() => {

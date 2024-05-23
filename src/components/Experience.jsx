@@ -31,7 +31,6 @@ export const Experience = ({ lines, ships, addShip, explodedShips, target }) => 
         <planeGeometry />
         <meshBasicMaterial map={muzzleFlashTexture} transparent/>
       </mesh> */}
-      <Laser start={[-1, 0, 0]} end={[1,0,0]} />
       {ships?.map(ship => <Ship key={ship.id} data={ship} addShip={addShip} exploded={explodedShips?.includes(ship.id)}/>)}
     </>
   );
