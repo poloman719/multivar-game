@@ -325,6 +325,7 @@ io.on("connection", (socket) => {
   });
   socket.on("get_question", () => {
     const user = users.find((user) => user.id == socket.sessionID);
+    console.log(user);
     let remainingQuestions = questions.filter(
       (question) => !user.gotQuestions.includes(question.number)
     );

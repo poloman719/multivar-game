@@ -125,7 +125,7 @@ function App() {
     });
     socket.on("damage", (id, hitterID) => {
       console.log(userRef.current.id==id);
-      damage(userRef.current.id, hitterID);
+      damage(id, hitterID);
       setUsers((state) =>
         state.map((user) =>
           user.id == id ? { ...user, health: user.health - 10 } : user
@@ -216,7 +216,7 @@ function App() {
     console.log(user);
     // console.log(user.id==id);
     // console.log(socket.sessionID)
-    if (user.id == id) {
+    if (userRef.current.id == id) {
       setJustHit(true);
       setTimeout(() => {
         setJustHit(false);
