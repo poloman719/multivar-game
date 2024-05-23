@@ -55,7 +55,7 @@ const questions = [
     number: 6,
     question:
       "Find the distance from the point (7, 5, 6) to the plane 9x + 2z -2y = 5. Round to the nearest thousandth.",
-    answer: "6.418",
+    answer: "6.148",
   },
   {
     number: 7,

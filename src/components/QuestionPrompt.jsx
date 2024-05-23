@@ -217,9 +217,6 @@ const QuestionPrompt = ({ question, markCorrect, setAnswering }) => {
             <button>Submit</button>
           </form>
         )}
-        <p>
-          Your answer: <b>{renderedAnswer}</b>
-        </p>
         <p>{response}</p>
         {response && (
           <button

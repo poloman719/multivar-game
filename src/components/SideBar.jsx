@@ -137,7 +137,7 @@ const SideBar = ({ users, isHost, gameState, answering, setAnswering, targetHand
       {!answering && <button onClick={inputHandler}>Submit Inputs</button>}
       {(answering && gameState) && <button onClick={() => onInput("fire")}>Fire!</button>}
       {(answering && gameState) && <button onClick={() => onInput("move")}>Move!</button>}
-      {<button onClick={targetHandler}>Go to ship</button>}
+      {/* {<button onClick={targetHandler}>Go to ship</button>} */}
       <p>{error}</p>
     </div>
   );

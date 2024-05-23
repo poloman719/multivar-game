@@ -6,7 +6,7 @@ import useAnimation from "./useAnimation";
 import { DoubleSide } from "three";
 import { Quaternion } from "three";
 
-export const Ship = ({ data, addShip, exploded, isYou }) => {
+export const Ship = ({ data, addShip, exploded, isYou, set }) => {
   const [showText, setShowText] = useState(false);
   const texture = useLoader(TextureLoader, "rocket.png");
   const indicatorTexture = useLoader(TextureLoader, "you-indicator.png");
@@ -37,6 +37,10 @@ export const Ship = ({ data, addShip, exploded, isYou }) => {
     console.log(exploded);
     if (exploded) startAnimExplosionTexture();
   }, [exploded]);
+
+  useEffect(() => {
+    if (isYou) set(ship)
+  }, [])
 
   useFrame((state, delta) => {
     // if (data.velocity) ship.current.position.add(new Vector3(data.velocity[0], data.velocity[1], data.velocity[2]) * delta / 1000)
@@ -74,11 +78,11 @@ export const Ship = ({ data, addShip, exploded, isYou }) => {
         scale={0.2}
         ref={board}
       >
-        <Text visible={showText}>
+        {ship.current && <Text visible={showText}>
           {"("}
-          {position.x}, {position.z}, {position.y}
+          {ship.current.position.x}, {ship.current.position.z}, {ship.current.position.y}
           {")"}
-        </Text>
+        </Text>}
         {!isYou && <Text visible={!showText}>{data.name}</Text>}
         {isYou && (
           <mesh visible={!showText} scale={2}>
@@ -88,7 +92,7 @@ export const Ship = ({ data, addShip, exploded, isYou }) => {
         )}
       </Billboard>
       <mesh
-        position={position}
+        position={data.position}
         scale={0.35}
         onPointerEnter={() => setShowText(true)}
         onPointerLeave={() => setShowText(false)}
@@ -101,7 +105,7 @@ export const Ship = ({ data, addShip, exploded, isYou }) => {
         <meshBasicMaterial transparent />
       </mesh>
       <mesh
-        position={position}
+        position={data.position}
         scale={[1.51830443 * 0.5, 1 * 0.5, 1 * 0.5]}
         ref={ship}
         rotation={data.rotation}

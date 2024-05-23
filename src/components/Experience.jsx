@@ -1,6 +1,6 @@
 import { OrbitControls, Line } from "@react-three/drei";
 import { Ship } from "./Ship";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import useAnimation from "./useAnimation";
 import Laser from "./Laser";
 import { Quaternion, Vector3 } from "three";
@@ -10,15 +10,16 @@ export const Experience = ({ lines, ships, addShip, explodedShips, targetState, 
   // const laserTexture = useAnimation("laser-animation/laser0","png",139, 1);
   // const muzzleFlashTexture = useAnimation("muzzle_flash-animation/muzzle flash0", "png", 33, 3);
   const controls = useRef();
+  const [userShip, setUserShip] = useState();
+  // const [state, setState] = useState()
 
-  useEffect(()=>{
-    console.log("TARGET CHANGE")
-    controls.current.update();
-  }, [targetState])
+  // useEffect(() => {
+  //   setState(userShip.current.position)
+  // }, [userShip.current.position])
 
   return (
     <>
-      <OrbitControls targetState={targetState} target={target} ref={controls}/>
+      <OrbitControls ref={controls}/>
       {/* {
         explosions.map(explosion => (<mesh position={explosion} scale={0.2}>
           <planeGeometry />
@@ -34,7 +35,7 @@ export const Experience = ({ lines, ships, addShip, explodedShips, targetState, 
         <meshBasicMaterial map={muzzleFlashTexture} transparent/>
       </mesh> */}
       {/* <Laser start={[-3,0,0]} end={[3,0,0]}/> */}
-      {ships?.map(ship => <Ship key={ship.id} data={ship} addShip={addShip} exploded={explodedShips?.includes(ship.id)} isYou={ship.id == user.id}/>)}
+      {ships?.map(ship => <Ship key={ship.id} data={ship} addShip={addShip} exploded={explodedShips?.includes(ship.id)} isYou={ship.id == user.id} set={setUserShip}/>)}
     </>
   );
 };

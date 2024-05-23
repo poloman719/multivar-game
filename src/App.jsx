@@ -145,7 +145,7 @@ function App() {
       const filteredShips = ships.filter((a) => a != userFiring);
       console.log(filteredShips);
       setUsers((state) =>
-        state.map((user) => (user.id == id ? { ...user, rotation: rot } : user))
+        state.map((user) => (user.id == userFiring.id ? { ...user, rotation: rot } : user))
       );
       if (userRef.current.id == userFiring.id) LineCheck(userFiring.position, line, filteredShips);
       setLines((lines) => [...lines, newLine]);
@@ -233,6 +233,8 @@ function App() {
   const targetHandler = ()=> {
     console.log("targetHandler called in app");
     setTarget(userRef.current.position);
+    console.log(userRef.current.position);
+    console.log(target);
     setTargetState(!targetState);
   }
     console.log(mode);
@@ -277,14 +279,14 @@ function App() {
               )}
               <Canvas shadows camera={{ position: [0, 0, 20], fov: 30 }}>
                 <color attach='background' args={["#000000"]} />
-                {(gameState&&user) && (
+                {(gameState&&user&&userRef.current) && (
                   <Experience
                     ships={users}
                     lines={lines}
                     addShip={addShip}
                     explodedShips={explodedShips}
                     user={user}
-                    targetState={targetState}
+                    targetState={userRef.current.position}
                     target={target}
                   />
                 )}
