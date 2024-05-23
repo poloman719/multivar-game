@@ -28,6 +28,7 @@ const Lobby = ({ users, user, isHost, gameState }) => {
   socket.on("late", () => {
     setGameStarted(true);
   });
+  socket.on("start_game", () => setGameStarted(true))
 
   const startGame = () => {
     if (!isHost) return;
