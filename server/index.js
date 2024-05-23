@@ -186,6 +186,7 @@ class User {
   }
 }
 const endGame = (remaining) => {
+  console.log(users);
   io.emit("end_game", remaining);
   setTimeout(() => {
     gameState = false;
