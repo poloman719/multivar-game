@@ -69,7 +69,7 @@ function App() {
     });
     socket.on("end_game", (winner) => {
       console.log(winner);
-      if (winner == "bruh" || winner=="null") {
+      if (winner == "bruh" || winner==null||winner==undefined) {
         updateBoard("The host has ended the game.");
         // console.log("host killed the game because they stink");
         let maxHits = 0;
