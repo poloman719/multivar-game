@@ -342,7 +342,7 @@ io.on("connection", (socket) => {
     //   remainingQuestions = questions;
     // }
     const rand = Math.floor(Math.random() * questions.length);
-    const question = remainingQuestions[rand];
+    const question = questions[rand];
     // user.gotQuestions.push(question.number);
     socket.emit("question", question);
   });
