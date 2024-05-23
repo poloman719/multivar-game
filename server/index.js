@@ -314,7 +314,7 @@ io.on("connection", (socket) => {
   });
   socket.on("move", (vel) => {
     const moved = users.find((user) => user.id == socket.sessionID);
-    const rotation = getRotationFromVelocity(line);
+    const rotation = getRotationFromVelocity(vel);
     moved.rotation = rotation;
     console.log("moving: " + moved);
     if (moved != null) moved.move(vel, rotation);
