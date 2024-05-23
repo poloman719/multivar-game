@@ -111,9 +111,9 @@ function App() {
       }, 5000);
       // setUsers([]);
     });
-    socket.on("move", (id, vel) => {
+    socket.on("move", (id, vel, rot) => {
       setUsers((state) =>
-        state.map((user) => (user.id == id ? { ...user, velocity: vel } : user))
+        state.map((user) => (user.id == id ? { ...user, velocity: vel, rotation: rot } : user))
       );
     });
     socket.on("stop", (id, position) => {
@@ -137,12 +137,15 @@ function App() {
         )
       );
     });
-    socket.on("fire", (userFiring, line) => {
+    socket.on("fire", (userFiring, line, rot) => {
       console.log("recieved fire!!!");
       const newLine = [userFiring.position, line];
       const filteredShips = ships.filter((a) => a != userFiring);
       console.log(filteredShips);
-      LineCheck(userFiring.position, line, filteredShips);
+      setUsers((state) =>
+        state.map((user) => (user.id == id ? { ...user, rotation: rot } : user))
+      );
+      if (userRef.current.id == userFiring.id) LineCheck(userFiring.position, line, filteredShips);
       setLines((lines) => [...lines, newLine]);
       setTimeout(() => {
         setLines((lines) => lines.filter((a) => a != newLine));
@@ -218,7 +221,7 @@ function App() {
     // console.log(socket.sessionID)
     if (userRef.current.id == id) {
       setJustHit(true);
-      updateBoard("Your remaining health: "+userRef.current.health);
+      updateBoard("Your remaining health: " + (userRef.current.health - 10));
       setTimeout(() => {
         setJustHit(false);
       }, 9400);

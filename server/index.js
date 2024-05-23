@@ -3,6 +3,8 @@ import { createServer } from "node:http";
 import { Server } from "socket.io";
 import crypto from "crypto";
 import InMemorySessionStore from "./SessionStore.js";
+import { Euler, Vector3 } from "three";
+import { Quaternion } from "three";
 
 const app = express();
 const server = createServer(app);
@@ -157,6 +159,7 @@ class User {
     this.host = h;
     this.hits = 0;
     this.gotQuestions = [];
+    this.rotation = [0, 0, 0];
   }
 
   damage(hitter) {
@@ -166,18 +169,18 @@ class User {
       kill(this.id, hitter.id);
     }
     console.log(hitter);
-    console.log(users)
-    console.log(hitter.id)
+    console.log(users);
+    console.log(hitter.id);
     hitter.hits++;
   }
 
-  move(vel) {
+  move(vel, rotation) {
     this.velocity = vel;
     io.emit("move", this.id, vel);
     setTimeout(() => {
       this.position = this.position.map((val, i) => val + this.velocity[i] * 5);
       this.velocity = null;
-      io.emit("stop", this.id, this.position);
+      io.emit("stop", this.id, this.position, rotation);
     }, 5000);
     // stops the movement after 5 seconds
   }
@@ -311,15 +314,19 @@ io.on("connection", (socket) => {
   });
   socket.on("move", (vel) => {
     const moved = users.find((user) => user.id == socket.sessionID);
+    const rotation = getRotationFromVelocity(line);
+    moved.rotation = rotation;
     console.log("moving: " + moved);
-    if (moved != null) moved.move(vel);
+    if (moved != null) moved.move(vel, rotation);
   });
   socket.on("fire", (line) => {
     const userFiring = users.find((user) => user.id == socket.sessionID);
+    const rotation = getRotationFromVelocity(line);
+    userFiring.rotation = rotation;
     if (userFiring) {
       const position = userFiring.position;
       console.log(position[0], position[1], position[2]);
-      io.emit("fire", userFiring, line);
+      io.emit("fire", userFiring, line, rotation);
     }
   });
   socket.on("get_question", () => {
@@ -337,3 +344,17 @@ io.on("connection", (socket) => {
     socket.emit("question", question);
   });
 });
+
+const getRotationFromVelocity = (velocity) => {
+  const normalized = new Vector3(
+    velocity[0],
+    velocity[1],
+    velocity[2]
+  ).normalize();
+  const q = new Quaternion().setFromUnitVectors(
+    new Vector3(1, 0, 0),
+    normalized
+  );
+  const rotation = new Euler().setFromQuaternion(q);
+  return [rotation.x, rotation.y, rotation.z];
+};

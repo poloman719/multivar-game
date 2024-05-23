@@ -52,21 +52,21 @@ export const Ship = ({ data, addShip, exploded, isYou }) => {
       board.current.position.x += data.velocity[0] * delta;
       board.current.position.y += data.velocity[1] * delta;
       board.current.position.z += data.velocity[2] * delta;
-      const normalized = new Vector3(data.velocity[0], data.velocity[1], data.velocity[2]).normalize();
-      const q = new Quaternion().setFromUnitVectors(
-        new Vector3(1, 0, 0),
-        normalized
-      );
-      ship.current.rotation.setFromQuaternion(q);
-      hitBox.current.rotation.setFromQuaternion(q);
-      board.current.rotation.setFromQuaternion(q);
+      // const normalized = new Vector3(data.velocity[0], data.velocity[1], data.velocity[2]).normalize();
+      // const q = new Quaternion().setFromUnitVectors(
+      //   new Vector3(1, 0, 0),
+      //   normalized
+      // );
+      // ship.current.rotation.setFromQuaternion(q);
+      // hitBox.current.rotation.setFromQuaternion(q);
+      // board.current.rotation.setFromQuaternion(q);
     }
     // ship.current.lookAt(state.camera.position);
     // ship.current.rotateZ(Math.PI / 2)
   });
 
   return (
-    <group>
+    <group rotation={data.rotation}>
       <Billboard
         position={data.position.map((n, i) => (i == 1 ? n + 0.5 : n))}
         scale={0.2}

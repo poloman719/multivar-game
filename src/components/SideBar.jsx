@@ -84,10 +84,6 @@ const SideBar = ({ users, isHost, gameState, answering, setAnswering }) => {
     setAnswering(true);
   }
 
-  const cameraToUser = () =>{
-    
-  }
-
   return (
     <div className='sidebar'>
       <h2>Players</h2>

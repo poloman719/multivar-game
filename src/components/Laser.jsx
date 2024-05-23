@@ -1,9 +1,7 @@
 import { DoubleSide, Euler, Vector3 } from "three";
 import useAnimation from "./useAnimation";
 import { Quaternion } from "three";
-import { useFrame } from "@react-three/fiber";
 import { useEffect, useRef } from "react";
-import { TextureLoader } from "three";
 
 const Laser = ({ start, end }) => {
   const midpoint = start.map((n, i) => (n + end[i]) / 2);
@@ -56,31 +54,21 @@ const Laser = ({ start, end }) => {
   }, []);
 
   return (
-    <>
-      <mesh
-        position={positionVec}
-        scale={[distanceVec.length() * 1.818, 5, 5]}
-        rotation={rotation}
+    <mesh
+      position={positionVec}
+      scale={[distanceVec.length() * 1.818, 5, 5]}
+      rotation={rotation}
+      ref={plane}
+    >
+      <planeGeometry />
+      <meshBasicMaterial
+        transparent
         ref={plane}
-      >
-        <planeGeometry />
-        <meshBasicMaterial
-          transparent
-          ref={plane}
-          map={laserTexture}
-          side={DoubleSide}
-          depthWrite={false}
-        />
-      </mesh>
-      <mesh position={start} scale={0.05}>
-        <sphereGeometry />
-        <meshBasicMaterial />
-      </mesh>
-      <mesh position={end} scale={0.05}>
-        <sphereGeometry />
-        <meshBasicMaterial />
-      </mesh>
-    </>
+        map={laserTexture}
+        side={DoubleSide}
+        depthWrite={false}
+      />
+    </mesh>
   );
 };
 
