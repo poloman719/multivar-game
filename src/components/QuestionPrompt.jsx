@@ -7,7 +7,7 @@ const QuestionPrompt = ({ question, markCorrect, setAnswering }) => {
   const [renderedAnswer, setRenderedAnswer] = useState("");
   const [buttonStatus, setButtonStatus] = useState("");
   const type = question.type;
-  console.log(type)
+  console.log(type);
   const [xi, setXi] = useState("");
   const [yi, setYi] = useState("");
   const [zi, setZi] = useState("");
@@ -55,8 +55,18 @@ const QuestionPrompt = ({ question, markCorrect, setAnswering }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setRenderedAnswer(answer);
-    if (answer == question.answer) {
+    let correct = false;
+    switch (type) {
+      case "plane":
+        // if (question.as)
+        break;
+      case "point":
+
+        break;
+      default:
+        correct = answer == question.answer;
+    }
+    if (correct) {
       setResponse("Correct!");
       setAnswering(false);
       setButtonStatus("Close");
@@ -78,7 +88,7 @@ const QuestionPrompt = ({ question, markCorrect, setAnswering }) => {
             {type == "reg" && (
               <input onChange={(e) => setAnswer(e.target.value)} type='text' />
             )}
-            {type == "line" && (
+            {/* {type == "line" && (
               <>
                 <div>
                   x ={" "}
@@ -138,7 +148,7 @@ const QuestionPrompt = ({ question, markCorrect, setAnswering }) => {
                   t
                 </div>
               </>
-            )}
+            )} */}
             {type == "plane" && (
                 <div>
                   <input

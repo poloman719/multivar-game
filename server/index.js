@@ -19,27 +19,27 @@ const io = new Server(server, {
 });
 
 const questions = [
-  { number: 1, question: "What is 9 + 10?", answer: "21"},
+  { number: 1, question: "Find the linear equation of the plane that passes through (6, 2, 4)  and is parallel to the plane 4x - 6y + 3z -7 = 0.", answer: {a:12,b:-18,c:9,d:-72}, type: "plane"},
   // { number: 2, question: "Determine whether the planes 2x - 5y + 3z = 45 and 25y + 225 = 15z + 10x are parallel, perpendicular, or neither. If neither, find the angle between the two planes, and round to the nearest thousandth in radians.", answer: "parallel"},
   // { number: 3, question: "Determine whether the planes 8x -2z + y =17 and 32z + 2y = 12x + 7  are parallel, perpendicular, or neither. If neither, find the angle between the two planes, and round to the nearest thousandth in radians.", answer:"2.160"},
   // { number: 4, question: "Determine whether the planes 9x - 15y - 6z = 31 and -4x + 2y - 11z = -56  are parallel, perpendicular, or neither. If neither, find the angle between the two planes, and round to the nearest thousandth in radians.", answer: "perpendicular"},
   // { number: 5, question: "Find the distance from the point (13, 6, 2) to the plane 7z - 2y + 4x = 15. Round to the nearest thousandth.", answer: "4.695"},
   // { number: 6, question: "Find the distance from the point (7, 5, 6) to the plane 9x + 2z -2y = 5. Round to the nearest thousandth.", answer: "6.418"},
   // { number: 7, question: "Determine whether the lines are parallel, skew, or intersecting. If they intersect, find the point of intersection: x = -6t, y = 1 + 9t, z = -3t 	| x = 1 + 2s, y = 4 - 3s, z = s", answer: "parallel"},
-  { number: 8, question: "Find the equation of the plane that passes through the point (1, -1, 1) and with normal vector i + j - k.", answer: "4.695"},
+  { number: 8, question: "Find the equation of the plane that passes through the point (1, -1, 1) and with normal vector i + j - k.", answer: {a:1,b:1,c:-1,d:1}, type: "plane"},
   // { number: 9, question: "Determine whether the planes x + 4y - 3z = 1 and -3x + 6y + 7z = 0 are parallel, perpendicular, or neither. If neither, find the angle between the two planes in radians. For neither, round to the nearest thousandth.", answer: "perpendicular"},
   // { number: 10, question: "Find the distance from the point (-6, 3, 5) to the plane x - 2y - 4z = 8. Round to the nearest thousandth.", answer: "8.729"},
   // { number: 11, question: "Find the angle between the planes x + y + z = 1 and x + 2y + 2z = 1 in radians. Round to the nearest thousandth.", answer: "0.276"},
   // { number: 12, question: "Determine whether the line that passes through (-4, -6, 1) and (-2, 0, -3) and the line through (10, 18, 4) and (5, 3, 14) are parallel, perpendicular, or neither.", answer: "parallel"},
-  { number: 13, question: "Find the point at which the line x = 3 - t, y = 2 + t, z = 5t intersects the plane x - y + 2z = 9.", answer: "parallel"},
-  { number: 14, question: "Find the direction numbers for the line of intersection of the planes x + y + z = 1 and x + z = 0.", answer: "parallel"},
-  { number: 15, question: "Find the linear equation of the plane that has a normal vector <8, 1, 2> and contains the point(-1, 2, -5).", answer: "parallel"},
+  { number: 13, question: "Find the point at which the line x = 3 - t, y = 2 + t, z = 5t intersects the plane x - y + 2z = 9.", answer: {a:2,b:3,c:5}, type: "point"},
+  { number: 14, question: "Find the direction numbers for the line of intersection of the planes x + y + z = 1 and x + z = 0.", answer: {a:1,b:0,c:-1}, type: "point"},
+  { number: 15, question: "Find the linear equation of the plane that has a normal vector <8, 1, 2> and contains the point(-1, 2, -5).", answer: {a:8,b:1,c:-2,d:16}, type: "plane"},
   // { number: 16, question: "What is the angle of intersection of the two planes: 3x+15y-7z+10=0, -6x-30y+14z-15=0? If the planes are parallel, enter “parallel”.", answer: "parallel"},
   // { number: 17, question: "What is the distance between the plane x+3y+5z+13=0 and the point (1,2,3)? Round your answer to the nearest thousandth.", answer: "5.916"},
   // { number: 18, question: "What is the angle between the planes 15x+15y+15z+15=15 and 16x+16y+16z+16=16 in radians?", answer: "0"},
   // { number: 19, question: "Are the lines (x+6)/9=(y+32)/3=(z-33)/15 and (x-2)/6=(y+4)/2=(z-6)/10 intersecting, parallel, or skew?", answer: "parallel"},
-  { number: 20, question: "Find the point of intersection of the lines x+6=y+3=z-5 and 2x+10=3y+4=2z-16.", answer: "parallel"},
-  { number: 21, question: "Unfinished", answer: "parallel"},
+  { number: 20, question: "Find the point of intersection of the lines x+6=y+3=z-5 and 2x+10=3y+4=2z-16.", answer: {a:-4,b:-1,c:7}, type: "point"},
+  // { number: 21, question: "Unfinished", answer: "parallel"},
 
 ]
 

@@ -23,10 +23,9 @@ export const Experience = ({ lines, ships, addShip, explodedShips, target }) => 
           <meshBasicMaterial attach='material' map={texture} transparent />
         </mesh>))
       } */}
-      {lines.map(line => <Line 
-        points={[[line[0][0],line[0][1],line[0][2]],[line[0][0] + line[1][0] * 10, line[0][1] + line[1][1] * 10, line[0][2] + line[1][2] * 10]]}
-        segments
-        color="red"
+      {lines.map(line => <Laser 
+        start={line[0]}
+        end={line[1]}
       />)}
       {/* <mesh scale={[1, 0.72737186477, 1]}>
         <planeGeometry />

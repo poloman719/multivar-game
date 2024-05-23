@@ -2,11 +2,15 @@ import { useFrame, useLoader } from "@react-three/fiber";
 import { TextureLoader, Vector3 } from "three";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Billboard, Text } from "@react-three/drei";
+import useAnimation from "./useAnimation";
+import { DoubleSide } from "three";
 
 export const Ship = ({ data, addShip, exploded }) => {
   const [showText, setShowText] = useState(false);
   const texture = useLoader(TextureLoader, "rocket.png");
   const explosionTexture = useLoader(TextureLoader, "explosion.png")
+  const [animExplosionTexture, startAnimExplosionTexture] = useAnimation("explosion-animation/explosion0", "png", 67, 1);
+
   const ship = useRef();
   const hitBox = useRef();
 
@@ -18,6 +22,7 @@ export const Ship = ({ data, addShip, exploded }) => {
 
   useEffect(() => {
     console.log(exploded)
+    if (exploded) startAnimExplosionTexture();
   }, [exploded])
 
   useFrame((state, delta) => {
@@ -33,8 +38,8 @@ export const Ship = ({ data, addShip, exploded }) => {
       hitBox.current.position.y += data.velocity[1] * delta
       hitBox.current.position.z += data.velocity[2] * delta
     }
-    ship.current.lookAt(state.camera.position);
-    ship.current.rotateZ(-Math.PI / 2);
+    // ship.current.lookAt(state.camera.position);
+    // ship.current.rotateZ(Math.PI / 2)
   });
 
   return (
@@ -62,9 +67,9 @@ export const Ship = ({ data, addShip, exploded }) => {
         <sphereGeometry />
         <meshBasicMaterial transparent />
       </mesh>
-      <mesh position={position} scale={0.2} ref={ship}>
+      <mesh position={position} scale={[1.51830443 * .5, 1 * .5, 1 * .5]} ref={ship}>
         <planeGeometry />
-        <meshBasicMaterial attach='material' map={exploded ? explosionTexture : texture} transparent />
+        <meshBasicMaterial attach='material' map={exploded ? animExplosionTexture : texture} transparent side={DoubleSide}/>
       </mesh>
     </group>
   );

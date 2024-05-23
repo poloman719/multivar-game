@@ -79,16 +79,16 @@ function App() {
         else definitiveWinners = usersWithHighestHealth;
       }
       else definitiveWinner=usersWithMaxHits[0];
-      if(definitiveWinner)
-        alert(`${definitiveWinner.name} has won!`);
-      else {
-        let str = "The following people have tied for 1st place: ";
-        for(winner of definitiveWinners){
-          str+=winner+", ";
-        }
-        str = str.substring(0,str.length-2);
-        alert(str);
-      }
+      // if(definitiveWinner)
+      //   // alert(`${definitiveWinner.name} has won!`);
+      // else {
+      //   let str = "The following people have tied for 1st place: ";
+      //   for(winner of definitiveWinners){
+      //     str+=winner+", ";
+      //   }
+      //   str = str.substring(0,str.length-2);
+      //   // alert(str);
+      // }
       console.log(mode);
     }
       else {
@@ -157,8 +157,8 @@ function App() {
   };
 
   const kill = (id, killerID, killedName, killerName) => {
-    alert(`${killedName} has been blown up by ${killerName}!`);
-    // console.log(id+" dieded lmao");
+    // alert(`${killedName} has been blown up by ${killerName}!`);
+    console.log(id+" dieded lmao");
     setExplodedShips(state => [...state, id]);
     setTimeout(() => {
       setExplodedShips(state => state.filter(ship => ship.id != id))
