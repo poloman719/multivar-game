@@ -58,7 +58,7 @@ const Laser = ({ start, end }) => {
   return (
     <mesh
       position={positionVec}
-      scale={distanceVec.length() * 1.7543}
+      scale={[distanceVec.length() * 1.7543, 5, 5]}
       rotation={rotation}
       ref={plane}
     >
