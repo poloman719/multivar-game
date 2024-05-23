@@ -196,7 +196,8 @@ const endGame = (remaining) => {
 const kill = (id, killerID) => {
   const killed = users.find((user) => user.id == id);
   const killer = users.find((user) => user.id == killerID);
-  io.emit("kill", id, killerID, killed.name, killer.name);
+  
+  io.emit("kill", id, killerID, killed.name, killer ? killer.name : "Host");
   const remaining = users.filter((user) => user.id != id);
   users = remaining;
   if (remaining.length == 1) {
