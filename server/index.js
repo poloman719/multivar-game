@@ -176,11 +176,11 @@ class User {
 
   move(vel, rotation) {
     this.velocity = vel;
-    io.emit("move", this.id, vel);
+    io.emit("move", this.id, vel, rotation);
     setTimeout(() => {
       this.position = this.position.map((val, i) => val + this.velocity[i] * 5);
       this.velocity = null;
-      io.emit("stop", this.id, this.position, rotation);
+      io.emit("stop", this.id, this.position);
     }, 5000);
     // stops the movement after 5 seconds
   }

@@ -5,14 +5,20 @@ import useAnimation from "./useAnimation";
 import Laser from "./Laser";
 import { Quaternion, Vector3 } from "three";
 
-export const Experience = ({ lines, ships, addShip, explodedShips, target, user }) => {
+export const Experience = ({ lines, ships, addShip, explodedShips, targetState, target, user }) => {
   // const explosionTexture = useAnimation("explosion-animation/explosion0", "png", 67, 1);
   // const laserTexture = useAnimation("laser-animation/laser0","png",139, 1);
   // const muzzleFlashTexture = useAnimation("muzzle_flash-animation/muzzle flash0", "png", 33, 3);
+  const controls = useRef();
+
+  useEffect(()=>{
+    console.log("TARGET CHANGE")
+    controls.current.update();
+  }, [targetState])
 
   return (
     <>
-      <OrbitControls />
+      <OrbitControls targetState={targetState} target={target} ref={controls}/>
       {/* {
         explosions.map(explosion => (<mesh position={explosion} scale={0.2}>
           <planeGeometry />

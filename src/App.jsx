@@ -27,6 +27,8 @@ function App() {
   const [justHit, setJustHit] = useState(false);
   const userRef = useRef(user);
   const usersRef = useRef(users);
+  const [target, setTarget] = useState([0,0,0]);
+  const[targetState,setTargetState] = useState(false);
   
   useEffect(() => { userRef.current = user });
   useEffect(() => { usersRef.current = users });
@@ -227,12 +229,18 @@ function App() {
       }, 9400);
     }
   };
+
+  const targetHandler = ()=> {
+    console.log("targetHandler called in app");
+    setTarget(userRef.current.position);
+    setTargetState(!targetState);
+  }
     console.log(mode);
     console.log(user);
 
     return (
       <>
-        {gameState ? (
+        {(gameState && user) ? (
           <div className='app'>
             <LineContext.Provider value={lines}>
               {users != null ? (
@@ -243,6 +251,7 @@ function App() {
                   gameState={gameState}
                   answering={answering}
                   setAnswering={setAnswering}
+                  targetHandler={targetHandler}
                 />
               ) : (
                 <h1>Loading...</h1>
@@ -268,13 +277,15 @@ function App() {
               )}
               <Canvas shadows camera={{ position: [0, 0, 20], fov: 30 }}>
                 <color attach='background' args={["#000000"]} />
-                {gameState && (
+                {(gameState&&user) && (
                   <Experience
                     ships={users}
                     lines={lines}
                     addShip={addShip}
                     explodedShips={explodedShips}
                     user={user}
+                    targetState={targetState}
+                    target={target}
                   />
                 )}
               </Canvas>

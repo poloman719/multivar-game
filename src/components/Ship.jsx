@@ -21,6 +21,7 @@ export const Ship = ({ data, addShip, exploded, isYou }) => {
   const ship = useRef();
   const hitBox = useRef();
   const board = useRef();
+  const muzzleFlash = useRef();
 
   const position = new Vector3(
     data.position[0],
@@ -52,6 +53,7 @@ export const Ship = ({ data, addShip, exploded, isYou }) => {
       board.current.position.x += data.velocity[0] * delta;
       board.current.position.y += data.velocity[1] * delta;
       board.current.position.z += data.velocity[2] * delta;
+      // muzzleFlash.current.translateX(2);
       // const normalized = new Vector3(data.velocity[0], data.velocity[1], data.velocity[2]).normalize();
       // const q = new Quaternion().setFromUnitVectors(
       //   new Vector3(1, 0, 0),
@@ -66,7 +68,7 @@ export const Ship = ({ data, addShip, exploded, isYou }) => {
   });
 
   return (
-    <group rotation={data.rotation}>
+    <group>
       <Billboard
         position={data.position.map((n, i) => (i == 1 ? n + 0.5 : n))}
         scale={0.2}
@@ -93,6 +95,7 @@ export const Ship = ({ data, addShip, exploded, isYou }) => {
         visible={false}
         ref={hitBox}
         userData={{ id: data.id }}
+        rotation={data.rotation}
       >
         <sphereGeometry />
         <meshBasicMaterial transparent />
@@ -101,6 +104,7 @@ export const Ship = ({ data, addShip, exploded, isYou }) => {
         position={position}
         scale={[1.51830443 * 0.5, 1 * 0.5, 1 * 0.5]}
         ref={ship}
+        rotation={data.rotation}
       >
         <planeGeometry />
         <meshBasicMaterial
@@ -112,7 +116,8 @@ export const Ship = ({ data, addShip, exploded, isYou }) => {
         />
       </mesh>
       {/* <mesh
-        position={new Vector3().copy(position)}
+        position={position}
+        ref={muzzleFlash}
       >
         <planeGeometry />
         <meshBasicMaterial />

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { socket } from "../socket";
 
-const SideBar = ({ users, isHost, gameState, answering, setAnswering }) => {
+const SideBar = ({ users, isHost, gameState, answering, setAnswering, targetHandler }) => {
   const [a, setA] = useState("");
   const [b, setB] = useState("");
   const [c, setC] = useState("");
@@ -137,7 +137,7 @@ const SideBar = ({ users, isHost, gameState, answering, setAnswering }) => {
       {!answering && <button onClick={inputHandler}>Submit Inputs</button>}
       {(answering && gameState) && <button onClick={() => onInput("fire")}>Fire!</button>}
       {(answering && gameState) && <button onClick={() => onInput("move")}>Move!</button>}
-      {<button onClick={cameraHandler}>Go to ship</button>}
+      {<button onClick={targetHandler}>Go to ship</button>}
       <p>{error}</p>
     </div>
   );
