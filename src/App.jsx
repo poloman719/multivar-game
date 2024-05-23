@@ -29,6 +29,7 @@ function App() {
   const usersRef = useRef(users);
   const [target, setTarget] = useState([0,0,0]);
   const[targetState,setTargetState] = useState(false);
+  const [disabled, setDisabled] = useState(false);
   
   useEffect(() => { userRef.current = user });
   useEffect(() => { usersRef.current = users });
@@ -255,6 +256,7 @@ function App() {
                   answering={answering}
                   setAnswering={setAnswering}
                   targetHandler={targetHandler}
+                  disabled={disabled}
                 />
               ) : (
                 <h1>Loading...</h1>
@@ -266,6 +268,7 @@ function App() {
                   markCorrect={escapePrompt}
                   setAnswering={setAnswering}
                   answering={answering}
+                  setDisabled={setDisabled}
                 />
               )}
               <div className='messageBoard'>

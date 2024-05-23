@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { socket } from "../socket";
 
-const QuestionPrompt = ({ question, markCorrect, setAnswering }) => {
+const QuestionPrompt = ({ question, markCorrect, setAnswering, setDisabled }) => {
   const [response, setResponse] = useState("");
   const [answer, setAnswer] = useState(null);
   const [renderedAnswer, setRenderedAnswer] = useState("");
@@ -82,6 +82,8 @@ const QuestionPrompt = ({ question, markCorrect, setAnswering }) => {
         "WRONG! Looks like SOMEONE needs to go back to MATH SCHOOL..."
       );
       setButtonStatus("Retry");
+      setDisabled(true);
+      setTimeout(() => setDisabled(false), 30*1000);
     }
   };
 

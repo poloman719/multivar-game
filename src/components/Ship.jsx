@@ -87,7 +87,7 @@ export const Ship = ({ data, addShip, exploded, isYou, set }) => {
         {isYou && (
           <mesh visible={!showText} scale={2}>
             <planeGeometry />
-            <meshBasicMaterial map={indicatorTexture} />
+            <meshBasicMaterial map={indicatorTexture} transparent/>
           </mesh>
         )}
       </Billboard>
