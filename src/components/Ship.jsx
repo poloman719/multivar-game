@@ -69,7 +69,7 @@ export const Ship = ({ data, addShip, exploded }) => {
       </mesh>
       <mesh position={position} scale={[1.51830443 * .5, 1 * .5, 1 * .5]} ref={ship}>
         <planeGeometry />
-        <meshBasicMaterial attach='material' map={exploded ? animExplosionTexture : texture} transparent side={DoubleSide}/>
+        <meshBasicMaterial attach='material' map={exploded ? animExplosionTexture : texture} transparent side={DoubleSide} depthWrite={false}/>
       </mesh>
     </group>
   );

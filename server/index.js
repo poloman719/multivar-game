@@ -32,7 +32,7 @@ const questions = [
   // { number: 11, question: "Find the angle between the planes x + y + z = 1 and x + 2y + 2z = 1 in radians. Round to the nearest thousandth.", answer: "0.276"},
   // { number: 12, question: "Determine whether the line that passes through (-4, -6, 1) and (-2, 0, -3) and the line through (10, 18, 4) and (5, 3, 14) are parallel, perpendicular, or neither.", answer: "parallel"},
   { number: 13, question: "Find the point at which the line x = 3 - t, y = 2 + t, z = 5t intersects the plane x - y + 2z = 9.", answer: {a:2,b:3,c:5}, type: "point"},
-  { number: 14, question: "Find the direction numbers for the line of intersection of the planes x + y + z = 1 and x + z = 0.", answer: {a:1,b:0,c:-1}, type: "point"},
+  // { number: 14, question: "Find the direction numbers for the line of intersection of the planes x + y + z = 1 and x + z = 0.", answer: {a:1,b:0,c:-1}, type: "point"},
   { number: 15, question: "Find the linear equation of the plane that has a normal vector <8, 1, 2> and contains the point(-1, 2, -5).", answer: {a:8,b:1,c:-2,d:16}, type: "plane"},
   // { number: 16, question: "What is the angle of intersection of the two planes: 3x+15y-7z+10=0, -6x-30y+14z-15=0? If the planes are parallel, enter “parallel”.", answer: "parallel"},
   // { number: 17, question: "What is the distance between the plane x+3y+5z+13=0 and the point (1,2,3)? Round your answer to the nearest thousandth.", answer: "5.916"},
@@ -87,7 +87,7 @@ const endGame = remaining =>{
         },5000);
 }; 
 const kill = (id, killerID) => {
-  const killed = users.find((user) => user.id == killerID)
+  const killed = users.find((user) => user.id == id)
   const killer = users.find((user) => user.id == killerID)
   io.emit("kill", id, killerID, killed.name, killer.name);
   const remaining = users.filter((user) => user.id != id);

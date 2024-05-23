@@ -8,29 +8,29 @@ const QuestionPrompt = ({ question, markCorrect, setAnswering }) => {
   const [buttonStatus, setButtonStatus] = useState("");
   const type = question.type;
   console.log(type);
-  const [xi, setXi] = useState("");
-  const [yi, setYi] = useState("");
-  const [zi, setZi] = useState("");
+  // const [xi, setXi] = useState("");
+  // const [yi, setYi] = useState("");
+  // const [zi, setZi] = useState("");
   const [a, setA] = useState("");
   const [b, setB] = useState("");
   const [c, setC] = useState("");
   const [d, setD] = useState("");
 
-  const onXi = (e) => {
-    // e.target.value = Math.round(e.target.value);
-    // if(e.target.value<=2 && e.target.value>=-2)
-    setXi(e.target.value);
-  };
-  const onYi = (e) => {
-    // e.target.value = Math.round(e.target.value);
-    // if(e.target.value<=2 && e.target.value>=-2)
-    setYi(e.target.value);
-  };
-  const onZi = (e) => {
-    // e.target.value = Math.round(e.target.value);
-    // if(e.target.value<=2 && e.target.value>=-2)
-    setZi(e.target.value);
-  };
+  // const onXi = (e) => {
+  //   // e.target.value = Math.round(e.target.value);
+  //   // if(e.target.value<=2 && e.target.value>=-2)
+  //   setXi(e.target.value);
+  // };
+  // const onYi = (e) => {
+  //   // e.target.value = Math.round(e.target.value);
+  //   // if(e.target.value<=2 && e.target.value>=-2)
+  //   setYi(e.target.value);
+  // };
+  // const onZi = (e) => {
+  //   // e.target.value = Math.round(e.target.value);
+  //   // if(e.target.value<=2 && e.target.value>=-2)
+  //   setZi(e.target.value);
+  // };
 
   const onA = (e) => {
     // e.target.value = Math.round(e.target.value);
@@ -58,10 +58,17 @@ const QuestionPrompt = ({ question, markCorrect, setAnswering }) => {
     let correct = false;
     switch (type) {
       case "plane":
-        // if (question.as)
+        if (a / b == question.answer.a / question.answer.b && a / c == question.answer.a / question.answer.c && a / d == question.answer.a / question.answer.d) {
+          correct = true;
+        } else {
+          correct = false;
+        }
         break;
       case "point":
-
+        if(a == question.answer.a && b==question.answer.b && c==question.answer.c)
+          correct=true;
+        else
+          correct=false;
         break;
       default:
         correct = answer == question.answer;
@@ -93,16 +100,16 @@ const QuestionPrompt = ({ question, markCorrect, setAnswering }) => {
                 <div>
                   x ={" "}
                   <input
-                    max='2'
-                    min='-2'
+                    
+                    
                     type='number'
                     onChange={onXi}
                     value={xi}
                   />{" "}
                   +{" "}
                   <input
-                    max='2'
-                    min='-2'
+                    
+                    
                     type='number'
                     onChange={onA}
                     value={a}
@@ -112,16 +119,16 @@ const QuestionPrompt = ({ question, markCorrect, setAnswering }) => {
                 <div>
                   y ={" "}
                   <input
-                    max='2'
-                    min='-2'
+                    
+                    
                     type='number'
                     onChange={onYi}
                     value={yi}
                   />{" "}
                   +{" "}
                   <input
-                    max='2'
-                    min='-2'
+                    
+                    
                     type='number'
                     onChange={onB}
                     value={b}
@@ -131,16 +138,16 @@ const QuestionPrompt = ({ question, markCorrect, setAnswering }) => {
                 <div>
                   z ={" "}
                   <input
-                    max='2'
-                    min='-2'
+                    
+                    
                     type='number'
                     onChange={onZi}
                     value={zi}
                   />{" "}
                   +{" "}
                   <input
-                    max='2'
-                    min='-2'
+                    
+                    
                     type='number'
                     onChange={onC}
                     value={c}
@@ -152,55 +159,55 @@ const QuestionPrompt = ({ question, markCorrect, setAnswering }) => {
             {type == "plane" && (
                 <div>
                   <input
-                    max='2'
-                    min='-2'
+                    
+                    
                     type='number'
                     onChange={onA}
                     value={a}
                   />x + {" "}
                   <input
-                    max='2'
-                    min='-2'
+                    
+                    
                     type='number'
                     onChange={onB}
                     value={b}
                   />y + {" "}
                   <input
-                    max='2'
-                    min='-2'
+                    
+                    
                     type='number'
                     onChange={onC}
                     value={c}
                   />z + {" "}
                   <input
-                    max='2'
-                    min='-2'
+                    
+                    
                     type='number'
                     onChange={onD}
                     value={d}
-                  />
+                  />{" = 0"}
                 </div>
             )}
-            {type == "plane" && (
+            {type == "point" && (
                 <div>
                   {"("}
                   <input
-                    max='2'
-                    min='-2'
+                    
+                    
                     type='number'
                     onChange={onA}
                     value={a}
                   />{", "}
                   <input
-                    max='2'
-                    min='-2'
+                    
+                    
                     type='number'
                     onChange={onB}
                     value={b}
                   />{", "}
                   <input
-                    max='2'
-                    min='-2'
+                    
+                    
                     type='number'
                     onChange={onC}
                     value={c}
