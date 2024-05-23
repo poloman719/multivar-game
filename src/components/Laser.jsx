@@ -2,7 +2,7 @@ import { Euler, Vector3 } from "three"
 import useAnimation from "./useAnimation"
 import { Quaternion } from "three";
 import { useFrame } from "@react-three/fiber";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 const Laser = ({start, end}) => {
   const midpoint = start.map((n, i) => (n + end[i]) / 2);
@@ -15,9 +15,9 @@ const Laser = ({start, end}) => {
   const rotation = new Euler().setFromQuaternion(q);
   const plane = useRef();
 
-  useFrame(() => {
-    plane.current.translateY(.2)
-  })
+  useEffect(() => {
+    
+  }, [])
 
   return (
     <>
