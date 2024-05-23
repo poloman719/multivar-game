@@ -332,17 +332,18 @@ io.on("connection", (socket) => {
     }
   });
   socket.on("get_question", () => {
-    const user = users.find((user) => user.id == socket.sessionID);
-    console.log(user);
-    let remainingQuestions = questions.filter(
-      (question) => !user.gotQuestions.includes(question.number)
-    );
-    if (remainingQuestions.length == 0) {
-      remainingQuestions = questions;
-    }
-    const rand = Math.floor(Math.random() * remainingQuestions.length);
+    // const user = users.find((user) => user.id == socket.sessionID);
+    // if (!user) return;
+    // console.log(user);
+    // let remainingQuestions = questions.filter(
+    //   (question) => !user.gotQuestions.includes(question.number)
+    // );
+    // if (remainingQuestions.length == 0) {
+    //   remainingQuestions = questions;
+    // }
+    const rand = Math.floor(Math.random() * questions.length);
     const question = remainingQuestions[rand];
-    user.gotQuestions.push(question.number);
+    // user.gotQuestions.push(question.number);
     socket.emit("question", question);
   });
 });
