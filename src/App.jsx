@@ -218,6 +218,7 @@ function App() {
     // console.log(socket.sessionID)
     if (userRef.current.id == id) {
       setJustHit(true);
+      updateBoard("Your remaining health: "+userRef.current.health);
       setTimeout(() => {
         setJustHit(false);
       }, 9400);

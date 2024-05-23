@@ -159,16 +159,15 @@ class User {
     this.gotQuestions = [];
   }
 
-  damage(hitterID) {
+  damage(hitter) {
     this.health -= 10;
-    io.emit("damage", this.id, hitterID);
+    io.emit("damage", this.id, hitter.id);
     if (this.health <= 0) {
-      kill(this.id, hitterID);
+      kill(this.id, hitter.id);
     }
-    console.log(hitterID);
+    console.log(hitter);
     console.log(users)
-    const hitter = users.find((user) => user.id == hitterID);
-    console.log(hitter)
+    console.log(hitter.id)
     hitter.hits++;
   }
 
@@ -303,8 +302,8 @@ io.on("connection", (socket) => {
   });
   socket.on("damage", (id) => {
     const damaged = users.find((user) => user.id == id);
-    const hitterId = socket.sessionID;
-    if (damaged) damaged.damage(hitterId);
+    const hitter = users.find((user) => user.id == socket.sessionID);
+    if (damaged) damaged.damage(hitter);
   });
   socket.on("kill", (id) => {
     console.log(socket.sessionID);
@@ -329,7 +328,7 @@ io.on("connection", (socket) => {
     let remainingQuestions = questions.filter(
       (question) => !user.gotQuestions.includes(question.number)
     );
-    if (remainingQuestions == 0) {
+    if (remainingQuestions.length == 0) {
       remainingQuestions = questions;
     }
     const rand = Math.floor(Math.random() * remainingQuestions.length);
