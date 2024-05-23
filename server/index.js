@@ -158,13 +158,14 @@ class User {
     this.hits = 0;
     this.gotQuestions = [];
   }
-  
+
   damage(hitterID) {
     this.health -= 10;
     io.emit("damage", this.id, hitterID);
     if (this.health <= 0) {
       kill(this.id, hitterID);
     }
+    console.log(hitterID);
     const hitter = users.find((user) => user.id == hitterID);
     console.log(hitter)
     hitter.hits++;

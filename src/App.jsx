@@ -1,6 +1,6 @@
 import { Canvas } from "@react-three/fiber";
 import { Experience } from "./components/Experience";
-import { useState, createContext, useEffect } from "react";
+import { useState, createContext, useEffect, useRef } from "react";
 import SideBar from "./components/SideBar";
 import Lobby from "./components/Lobby";
 import { Raycaster, TextureLoader } from "three";
@@ -25,6 +25,11 @@ function App() {
   const [answering, setAnswering] = useState(true);
   const [messageBoard, setMessageBoard] = useState([]);
   const [justHit, setJustHit] = useState(false);
+  const userRef = useRef(user);
+  const usersRef = useRef(users);
+  
+  useEffect(() => { userRef.current = user });
+  useEffect(() => { usersRef.current = users });
 
   useEffect(() => {
     socket.on("session", ({ sessionID }) => {
@@ -65,7 +70,7 @@ function App() {
         updateBoard("The host has ended the game.");
         // console.log("host killed the game because they stink");
         let maxHits = 0;
-        for (const user of users) {
+        for (const user of usersRef.current) {
           if (user.hits > maxHits) maxHits = user.hits;
         }
         const usersWithMaxHits = users.filter((user) => user.hits == maxHits);
@@ -119,7 +124,8 @@ function App() {
       );
     });
     socket.on("damage", (id, hitterID) => {
-      damage(id, hitterID);
+      console.log(userRef.current.id==id);
+      damage(userRef.current.id, hitterID);
       setUsers((state) =>
         state.map((user) =>
           user.id == id ? { ...user, health: user.health - 10 } : user
@@ -150,7 +156,7 @@ function App() {
       setQuestion(question);
       console.log("banana");
     });
-  }, [user]);
+  }, []);
 
   const LineCheck = (origin, direction, ships) => {
     origin = new Vector3(origin[0], origin[1], origin[2]);
