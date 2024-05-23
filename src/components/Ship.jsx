@@ -111,6 +111,12 @@ export const Ship = ({ data, addShip, exploded, isYou }) => {
           depthWrite={false}
         />
       </mesh>
+      {/* <mesh
+        position={new Vector3().copy(position)}
+      >
+        <planeGeometry />
+        <meshBasicMaterial />
+      </mesh> */}
     </group>
   );
 };
