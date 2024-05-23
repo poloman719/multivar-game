@@ -6,9 +6,9 @@ import Laser from "./Laser";
 import { Quaternion, Vector3 } from "three";
 
 export const Experience = ({ lines, ships, addShip, explodedShips, target }) => {
-  const explosionTexture = useAnimation("explosion-animation/explosion0", "png", 67, 1);
-  const laserTexture = useAnimation("laser-animation/laser0","png",139, 1);
-  const muzzleFlashTexture = useAnimation("muzzle_flash-animation/muzzle flash0", "png", 33, 3);
+  // const explosionTexture = useAnimation("explosion-animation/explosion0", "png", 67, 1);
+  // const laserTexture = useAnimation("laser-animation/laser0","png",139, 1);
+  // const muzzleFlashTexture = useAnimation("muzzle_flash-animation/muzzle flash0", "png", 33, 3);
   
   useEffect(() => {
     console.log(lines)
